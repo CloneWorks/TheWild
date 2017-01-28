@@ -170,7 +170,19 @@ public class WildGenerator : MonoBehaviour {
 
     void generateTerrain()
     {
+        //This example shows how to flatten your entire terrain to a height of 20...
 
+        //TerrainData TD = terrain.terrainData;
+        //float[,] HeightMap = new float[TD.heightmapWidth, TD.heightmapHeight];
+        //for (int x = 0; x < TD.heightmapWidth; x++)
+        //{
+        //    for (int y = 0; y < TD.heightmapHeight; y++)
+        //    {
+        //        HeightMap[x, y] = 20;
+        //    }
+        //}
+
+        //TD.SetHeights(0, 0, HeightMap);
     }
 
     void GetTowns()
