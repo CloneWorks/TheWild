@@ -32,6 +32,9 @@ public class MoveBehaviour : GenericBehaviour
 	// Update is used to set features regardless the active behaviour.
 	void Update ()
 	{
+        //Ensure grounded is correct
+        //anim.SetBool (groundedBool, IsGrounded());
+
 		// Activate run by input.
 		run = Input.GetButton ("Run");
 		if(Input.GetButtonDown ("Jump"))

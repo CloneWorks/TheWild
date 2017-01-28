@@ -182,7 +182,9 @@ public abstract class GenericBehaviour : MonoBehaviour
 	protected ThirdPersonOrbitCam camScript;       // Reference to the third person camera script.
 	protected int behaviourCode;                   // The code that identifies a behaviour.
 	protected bool canSprint;                      // Boolean to store if the behaviour allows the player to sprint.
-	protected float distToGround;                   // Actual distance to ground.
+	protected float distToGround;                  // Actual distance to ground.
+
+    public float distanceToGroundExtra = 0.1f;         //An extra offset to ensure the player is near ground and doesn't fall below it
 
 	void Awake()
 	{
@@ -217,6 +219,6 @@ public abstract class GenericBehaviour : MonoBehaviour
 
 	// Function to tell whether or not the player is on ground.
 	public bool IsGrounded() {
-		return Physics.Raycast(transform.position, Vector3.down, distToGround + 0.1f);
+		return Physics.Raycast(transform.position, Vector3.down, distToGround + distanceToGroundExtra);
 	}
 }
