@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DontDestroyOnLoad : MonoBehaviour {
-
-    private static DontDestroyOnLoad instance = null;
+public class GameManager : MonoBehaviour {
+    public static GameManager instance = null;              //Static instance of GameManager which allows it to be accessed by any other script.
 
     void Awake()
     {
