@@ -5,6 +5,9 @@ using UnityEngine;
 public class WildGenerator : MonoBehaviour {
 
     //public variables
+    [Header("Time Access")]
+    public WorldClock worldClock;
+
     [Header("Object Genration and Positioning")]
     public List<GameObject> objects; //a list of all plants/trees/bushes/stones which will be scattered around the wild
 
@@ -37,32 +40,10 @@ public class WildGenerator : MonoBehaviour {
 
     public Vector3 terrainPosition; //holds the position of the terrain
 
-    [Header("Day/Night Cycle")]
-    [Tooltip("Number of seconds in 1 day = 86400")]
-    public int dayLength = 60; //holds the length of a day
-
-    [Tooltip("Number of seconds in 1 day = 86400")]
-    public int nightLength = 60; //holds the length of a day
-
-    public int CurrentTime; //The current time of the day
-
-    public int updateTimeInterval = 1; //how frequently to update the time
-
-    public int sunrise;
-    public int midday;
-    public int sunset;
-    public int midnight;
-    public int fullDay;
-
-    public int wildResetTime = 0;
-
-    public RectTransform clockHand;
-
-    public Material daySkybox;
-    public Material nightSkybox;
-
     //private variables
     private List<GameObject> theWild = new List<GameObject>(); //a list of all the objects that exsist currently in the wild
+
+    private bool wildReset = false; //ensures a world update only happens once per new day
 
     private int numberOfObjects;
 
@@ -82,15 +63,8 @@ public class WildGenerator : MonoBehaviour {
         terrainPosition = terrain.transform.position;
         numberOfObjects = objects.Count;
 
-        sunrise = 0;                            //beginning of the day
-        midday = dayLength / 2;                 //middle of the day
-        sunset = dayLength;                     //end of the day
-        midnight = dayLength + nightLength / 2; //middle of the night
-        fullDay = dayLength + nightLength;    //The total time of a day
-        CurrentTime = midday;                   //set time to mid-day
-
         //start coroutines
-        StartCoroutine(updateTime(updateTimeInterval));
+        StartCoroutine(checkWorldUpdate(worldClock.updateTimeInterval));
 
         //get towns
         GetTowns();
@@ -223,48 +197,30 @@ public class WildGenerator : MonoBehaviour {
         
     }
 
-    IEnumerator updateTime(int updateWait)
+    IEnumerator checkWorldUpdate(int updateWait)
     {
         while (true)
         {
-            //update time
-            CurrentTime += updateWait;
+            yield return new WaitForSeconds(updateWait/2);
 
-            //rotate clock hand
-            float handRotation = (360 / fullDay) * CurrentTime;
-
-            clockHand.rotation = Quaternion.Euler(0, 0, -handRotation); //new Vector3(0, 0, -handRotation);
-            //full day is over
-            if(CurrentTime == fullDay)
-            {
-                //reset the time
-                CurrentTime = 0;
-            }
-
-            //starting a new day
-            if(CurrentTime == wildResetTime)
+            //check if wild needs resetting
+            if (worldClock.IsNewDay() && !wildReset)
             {
                 //clear the wild
                 clearWild();
 
                 //regenrate the wild
                 StartCoroutine(generateWild());
-            }
 
-            //is day time
-            if (CurrentTime >= sunrise && CurrentTime <= sunset && RenderSettings.skybox != daySkybox)
-            {
-                RenderSettings.skybox = daySkybox;
-                DynamicGI.UpdateEnvironment();
+                //mark reset
+                wildReset = true;
             }
-            //is night time
-            else if (CurrentTime < fullDay && CurrentTime > sunset && RenderSettings.skybox != nightSkybox)
+            
+            if(!worldClock.IsNewDay())
             {
-                RenderSettings.skybox = nightSkybox;
-                DynamicGI.UpdateEnvironment();
+                wildReset = false;
             }
-
-            yield return new WaitForSeconds(updateWait);
         }
     }
+
 }
