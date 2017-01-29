@@ -110,7 +110,18 @@ public class WorldClock : MonoBehaviour {
     public void rotateClockHand()
     {
         //rotate clock hand
-        float handRotation = (360 / fullDay) * CurrentTime;
+        float handRotation;
+        
+        //if daytime
+        if(CurrentTime <= sunset){
+            handRotation = (float)(180 / (float)dayLength) * CurrentTime;
+        }
+        //is night time
+        else
+        {
+            handRotation = (float)(180 / (float)nightLength) * (CurrentTime - dayLength) + 180;
+        }
+        
         clockHand.rotation = Quaternion.Euler(0, 0, -handRotation); //new Vector3(0, 0, -handRotation);
     }
 }
