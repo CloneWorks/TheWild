@@ -61,6 +61,7 @@ public class WildGenerator : MonoBehaviour {
         //set variables
         terrainSize = terrain.terrainData.size;
         terrainPosition = terrain.transform.position;
+
         numberOfObjects = objects.Count;
 
         //start coroutines
@@ -90,7 +91,13 @@ public class WildGenerator : MonoBehaviour {
                 int randObj = Random.Range(0, numberOfObjects);
 
                 //generate terrain (height map)
-                generateTerrain();
+                //generateTerrain();
+
+                //place player
+                placePlayerOnTerrain();
+
+                //place towns
+                placeTownsOnTerrain();
 
                 //calculate chance of being created
                 float RandChance = Random.Range(0, 100);
@@ -126,6 +133,9 @@ public class WildGenerator : MonoBehaviour {
                         theWild.Add(newObj);
                     }
                 }
+
+                //place objects on terrain
+                placeWildObjectsOnTerrain();
                       
             }
         }
@@ -146,6 +156,24 @@ public class WildGenerator : MonoBehaviour {
 
     void generateTerrain()
     {
+        //The lower the numbers in the number range, the higher the hills/mountains will be...
+        float divRange = Random.Range(6, 15);
+
+        //The higher the numbers, the more hills/mountains there are
+        float tileSize = Random.Range(0, 10);
+
+        //Heights For Our Hills/Mountains
+        float[,] hts = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
+        for (int i = 0; i < terrain.terrainData.heightmapWidth; i++)
+        {
+            for (int k = 0; k < terrain.terrainData.heightmapHeight; k++)
+            {
+                hts[i, k] = Mathf.PerlinNoise(((float)i / (float)terrain.terrainData.heightmapWidth) * tileSize, ((float)k / (float)terrain.terrainData.heightmapHeight) * tileSize) / divRange;
+            }
+        }
+
+        terrain.terrainData.SetHeights(0, 0, hts);
+
         //This example shows how to flatten your entire terrain to a height of 20...
 
         //TerrainData TD = terrain.terrainData;
@@ -161,6 +189,26 @@ public class WildGenerator : MonoBehaviour {
         //TD.SetHeights(0, 0, HeightMap);
     }
 
+    void placePlayerOnTerrain()
+    {
+        player.transform.position = new Vector3(player.transform.position.x, terrain.SampleHeight(new Vector3(player.transform.position.x, 0, player.transform.position.z)), player.transform.position.z);
+    }
+
+    void placeTownsOnTerrain()
+    {
+        foreach(GameObject g in towns)
+        {
+            g.transform.position = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)) + 6, g.transform.position.z);
+        }
+    }
+
+    void placeWildObjectsOnTerrain()
+    {
+        foreach(GameObject g in objects)
+        {
+            g.transform.position = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)) + 6, g.transform.position.z);
+        }
+    }
     void GetTowns()
     {
         GameObject[] TownsInScene = GameObject.FindGameObjectsWithTag("Town");
