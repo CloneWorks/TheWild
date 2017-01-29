@@ -56,6 +56,8 @@ public class WildGenerator : MonoBehaviour {
 
     public int wildResetTime = 0;
 
+    public RectTransform clockHand;
+
     public Material daySkybox;
     public Material nightSkybox;
 
@@ -228,6 +230,10 @@ public class WildGenerator : MonoBehaviour {
             //update time
             CurrentTime += updateWait;
 
+            //rotate clock hand
+            float handRotation = (360 / fullDay) * CurrentTime;
+
+            clockHand.rotation = Quaternion.Euler(0, 0, -handRotation); //new Vector3(0, 0, -handRotation);
             //full day is over
             if(CurrentTime == fullDay)
             {
