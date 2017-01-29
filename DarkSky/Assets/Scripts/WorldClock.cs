@@ -25,6 +25,7 @@ public class WorldClock : MonoBehaviour {
     public int wildResetTime = 0;
 
     public RectTransform clockHand;
+    public Transform sunAndMoonRotationPoint;
 
     public Material daySkybox;
     public Material nightSkybox;
@@ -42,7 +43,10 @@ public class WorldClock : MonoBehaviour {
         CurrentTime = midday;                   //set time to mid-day
 
         //rotate clock hand
-        rotateClockHand();
+        setClockHandStartRotation();
+
+        //rotate sun and moon
+        setSunAndMoonStartRotation();
 
         //start coroutines
         StartCoroutine(updateTime(updateTimeInterval));
@@ -50,7 +54,11 @@ public class WorldClock : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        //rotate clock hand
+        rotateClockHand();
+
+        //rotate sun and moon
+        rotateSunAndMoon();
 	}
 
     public bool IsNewDay()
@@ -76,10 +84,13 @@ public class WorldClock : MonoBehaviour {
             CurrentTime += updateWait;
 
             //rotate clock hand
-            rotateClockHand();
+            //rotateClockHand();
             
+            //rotate sun and moon
+            //rotateSunAndMoon();
+
             //full day is over
-            if (CurrentTime == fullDay)
+            if (CurrentTime >= fullDay)
             {
                 //reset the time
                 CurrentTime = 0;
@@ -92,13 +103,13 @@ public class WorldClock : MonoBehaviour {
             }
 
             //is day time
-            if (CurrentTime >= sunrise && CurrentTime < sunset && RenderSettings.skybox != daySkybox)
+            if (CurrentTime > sunrise && CurrentTime <= sunset && RenderSettings.skybox != daySkybox)
             {
                 RenderSettings.skybox = daySkybox;
                 DynamicGI.UpdateEnvironment();
             }
             //is night time
-            else if (CurrentTime >= sunset && CurrentTime < fullDay && RenderSettings.skybox != nightSkybox)
+            else if (CurrentTime > sunset && CurrentTime <= fullDay && RenderSettings.skybox != nightSkybox)
             {
                 RenderSettings.skybox = nightSkybox;
                 DynamicGI.UpdateEnvironment();
@@ -122,6 +133,79 @@ public class WorldClock : MonoBehaviour {
             handRotation = (float)(180 / (float)nightLength) * (CurrentTime - dayLength) + 180;
         }
         
+        //clockHand.rotation = Quaternion.Euler(0, 0, -handRotation); //new Vector3(0, 0, -handRotation);
+
+        float speed = updateTimeInterval;
+
+        Quaternion targetRotation; //= sunAndMoonRotationPoint.rotation;
+
+        targetRotation = Quaternion.AngleAxis(-handRotation, Vector3.forward);
+
+        clockHand.rotation = Quaternion.Lerp(clockHand.rotation, targetRotation, Time.deltaTime * speed);
+    }
+
+    public void setClockHandStartRotation()
+    {
+        //rotate clock hand
+        float handRotation;
+
+        //if daytime
+        if (CurrentTime <= sunset)
+        {
+            handRotation = (float)(180 / (float)dayLength) * CurrentTime;
+        }
+        //is night time
+        else
+        {
+            handRotation = (float)(180 / (float)nightLength) * (CurrentTime - dayLength) + 180;
+        }
+
         clockHand.rotation = Quaternion.Euler(0, 0, -handRotation); //new Vector3(0, 0, -handRotation);
+    }
+
+    public void rotateSunAndMoon()
+    {
+        //rotate sun and moon
+        float SunAndMoonRotation;
+
+        //if daytime
+        if (CurrentTime <= sunset)
+        {
+            SunAndMoonRotation = (float)(180 / (float)dayLength) * CurrentTime;
+        }
+        //is night time
+        else
+        {
+            SunAndMoonRotation = (float)(180 / (float)nightLength) * (CurrentTime - dayLength) + 180;
+        }
+
+        //sunAndMoonRotationPoint.rotation = Quaternion.Euler(0, 0, SunAndMoonRotation); //new Vector3(0, 0, -handRotation);
+        
+        float speed = updateTimeInterval;
+
+        Quaternion targetRotation; //= sunAndMoonRotationPoint.rotation;
+
+        targetRotation = Quaternion.AngleAxis(SunAndMoonRotation, Vector3.forward);
+
+        sunAndMoonRotationPoint.rotation = Quaternion.Lerp(sunAndMoonRotationPoint.rotation, targetRotation, Time.deltaTime * speed);
+    }
+
+    public void setSunAndMoonStartRotation()
+    {
+        //rotate sun and moon
+        float SunAndMoonRotation;
+
+        //if daytime
+        if (CurrentTime <= sunset)
+        {
+            SunAndMoonRotation = (float)(180 / (float)dayLength) * CurrentTime;
+        }
+        //is night time
+        else
+        {
+            SunAndMoonRotation = (float)(180 / (float)nightLength) * (CurrentTime - dayLength) + 180;
+        }
+
+        sunAndMoonRotationPoint.rotation = Quaternion.Euler(0, 0, SunAndMoonRotation); //new Vector3(0, 0, -handRotation);
     }
 }
