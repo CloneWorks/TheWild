@@ -278,7 +278,7 @@ public class WildGenerator : MonoBehaviour {
     {
         foreach(GameObject g in towns)
         {
-            Vector3 newPos = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)) + 6, g.transform.position.z);
+            Vector3 newPos = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)), g.transform.position.z);
             Vector3 flatternPos = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)), g.transform.position.z);
             
             g.transform.position = newPos;
@@ -291,7 +291,7 @@ public class WildGenerator : MonoBehaviour {
     {
         foreach(GameObject g in theWild)
         {
-            g.transform.position = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)) + 6, g.transform.position.z);
+            g.transform.position = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)), g.transform.position.z);
         }
     }
 
