@@ -12,6 +12,8 @@ public class WorldClock : MonoBehaviour {
     [Tooltip("Number of seconds in 1 day = 86400")]
     public int nightLength = 60; //holds the length of a day
 
+    public int startTime = 0; //a settable time to begin the scene
+
     public int CurrentTime; //The current time of the day
 
     public int updateTimeInterval = 1; //how frequently to update the time
@@ -27,8 +29,13 @@ public class WorldClock : MonoBehaviour {
     public RectTransform clockHand;
     public Transform sunAndMoonRotationPoint;
 
+    [Header("Lighting")]
+    public Light light;
     public Material daySkybox;
     public Material nightSkybox;
+
+    public float sunIntensity = 1.0f;
+    public float moonIntensity = 0.1f;
 
 	// Use this for initialization
 	void Start () {
@@ -40,7 +47,11 @@ public class WorldClock : MonoBehaviour {
         sunset = dayLength;                     //end of the day
         midnight = dayLength + nightLength / 2; //middle of the night
         fullDay = dayLength + nightLength;    //The total time of a day
-        CurrentTime = midday;                   //set time to mid-day
+
+        CurrentTime = startTime;                   //set time to start time
+
+        //update skybox
+        updateSkybox();
 
         //rotate clock hand
         setClockHandStartRotation();
@@ -96,25 +107,28 @@ public class WorldClock : MonoBehaviour {
                 CurrentTime = 0;
             }
 
-            //starting a new day
-            if (CurrentTime == wildResetTime)
-            {
-                
-            }
+            //update Skybox
+            updateSkybox();
 
-            //is day time
-            if (CurrentTime > sunrise && CurrentTime <= sunset && RenderSettings.skybox != daySkybox)
-            {
-                RenderSettings.skybox = daySkybox;
-                DynamicGI.UpdateEnvironment();
-            }
-            //is night time
-            else if (CurrentTime > sunset && CurrentTime <= fullDay && RenderSettings.skybox != nightSkybox)
-            {
-                RenderSettings.skybox = nightSkybox;
-                DynamicGI.UpdateEnvironment();
-            }
+        }
+    }
 
+    public void updateSkybox()
+    {
+        //is day time
+        if (CurrentTime > sunrise && CurrentTime <= sunset && RenderSettings.skybox != daySkybox)
+        {
+            RenderSettings.skybox = daySkybox;
+            DynamicGI.UpdateEnvironment();
+            light.intensity = sunIntensity;
+            
+        }
+        //is night time
+        else if (CurrentTime > sunset && CurrentTime <= fullDay && RenderSettings.skybox != nightSkybox)
+        {
+            RenderSettings.skybox = nightSkybox;
+            DynamicGI.UpdateEnvironment();
+            light.intensity = moonIntensity;
         }
     }
 
