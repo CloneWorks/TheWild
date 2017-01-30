@@ -8,22 +8,12 @@ public class Flatter : MonoBehaviour
 
     float[,] heightmapData; // prepare a matrix with terrain points
     float ratio; // ratio between player position and terrain points
-    float ratioY; 
+    float ratioY; //height ratio
 
     // Use this for initialization
     void Start()
     {
 
-        terrData = Terrain.activeTerrain.terrainData;
-        int terrRes = terrData.heightmapResolution;
-        Vector3 terrSize = terrData.size;
-
-        heightmapData = terrData.GetHeights(0, 0, terrRes, terrRes); // heights we will change during of walking
-
-        ratio = (terrSize.x) / terrRes;
-        
-
-        Debug.Log("heightmapData=" + heightmapData + " terrRes=" + terrRes + " terrSize=" + terrSize + " ratio=" + ratio);
     }
 
     // Update is called once per frame
@@ -32,29 +22,41 @@ public class Flatter : MonoBehaviour
         //update terrain
         terrData = Terrain.activeTerrain.terrainData;
         int terrRes = terrData.heightmapResolution;
-        int terrResY = terrData.heightmapHeight;
 
         Vector3 terrSize = terrData.size;
 
         heightmapData = terrData.GetHeights(0, 0, terrRes, terrRes); // heights we will change during of walking
 
-        ratio = (terrSize.x) / terrResY;
-        ratioY = (terrSize.y);
+        ratio = (terrSize.x) / terrRes;
+        ratioY = (terrSize.y) / terrRes;
 
         //work out players position (player pos + terrain offset)
         float playPosX = transform.position.x + (terrData.size.x / 2);
         float playPosZ = transform.position.z + (terrData.size.z / 2);
 
-        float playPosY = transform.position.y + (terrData.size.y);
+        //store players height
+        float playPosY = transform.position.y/terrRes;
 
-        int terrainPointZ = Mathf.CeilToInt(playPosX / ratio);
-        int terrainPointX = Mathf.CeilToInt(playPosZ / ratio);
+        //get terrain point based of player location
+        int terrainPointZ = Mathf.CeilToInt(playPosX / ratio) - 1;
+        int terrainPointX = Mathf.CeilToInt(playPosZ / ratio) - 1;
 
-        int terrainPointY = Mathf.CeilToInt(playPosY / ratioY);
+        //get terrain height based on player location
+        float terrainPointY = (playPosY / ratioY);
 
-        Debug.Log(" terrainPointX=" + terrainPointX + " x terrainPointZ=" + terrainPointZ + ": set height to: " + terrainPointY);
+        //set height of terrain point under play to players height
+        heightmapData[terrainPointX, terrainPointZ] = terrainPointY;
 
-        heightmapData[terrainPointX, terrainPointZ] = terrainPointY; // move terrain point to 0 (example)
+        //get set heights in radius of player
+        int radius = 5;
+
+        for (int x = terrainPointX - radius; x < terrainPointX + radius; x++ )
+        {
+            for (int z = terrainPointZ - radius; z < terrainPointZ + radius; z++)
+            {
+                heightmapData[x, z] = terrainPointY;
+            }
+        }
 
     }
 
