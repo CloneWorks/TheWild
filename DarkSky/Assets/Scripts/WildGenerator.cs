@@ -81,6 +81,15 @@ public class WildGenerator : MonoBehaviour {
 
     IEnumerator generateWild()
     {
+        //generate terrain (height map)
+        generateTerrain();
+
+        //place player
+        placePlayerOnTerrain();
+
+        //place towns
+        placeTownsOnTerrain();
+
         //loop through x of terrain
         for (float x = 0; x < terrainSize.x; x+= xIncrement)
         {
@@ -89,15 +98,6 @@ public class WildGenerator : MonoBehaviour {
             {
                 //pick random object
                 int randObj = Random.Range(0, numberOfObjects);
-
-                //generate terrain (height map)
-                //generateTerrain();
-
-                //place player
-                placePlayerOnTerrain();
-
-                //place towns
-                placeTownsOnTerrain();
 
                 //calculate chance of being created
                 float RandChance = Random.Range(0, 100);
@@ -133,12 +133,13 @@ public class WildGenerator : MonoBehaviour {
                         theWild.Add(newObj);
                     }
                 }
-
-                //place objects on terrain
-                placeWildObjectsOnTerrain();
                       
             }
         }
+
+        //place objects on terrain
+        //placeWildObjectsOnTerrain();
+
         yield return null;
     }
 
@@ -204,7 +205,7 @@ public class WildGenerator : MonoBehaviour {
 
     void placeWildObjectsOnTerrain()
     {
-        foreach(GameObject g in objects)
+        foreach(GameObject g in theWild)
         {
             g.transform.position = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)) + 6, g.transform.position.z);
         }
@@ -243,6 +244,15 @@ public class WildGenerator : MonoBehaviour {
             return false;
         }
         
+    }
+
+    //only need if terrain is updated by itself (already called in the genrate wild method)
+    IEnumerator updateObjectHeights()
+    {
+        yield return new WaitForSeconds(5);
+
+        //place objects on terrain
+        placeWildObjectsOnTerrain();
     }
 
     IEnumerator checkWorldUpdate(int updateWait)
