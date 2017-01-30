@@ -65,7 +65,7 @@ public class Flatter : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.H))
         {
-            Debug.Log("Saving");
+            //Debug.Log("Saving");
 
             terrData.SetHeights(0, 0, heightmapData); // save terrain heights back
         }

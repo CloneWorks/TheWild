@@ -84,11 +84,11 @@ public class WildGenerator : MonoBehaviour {
         //generate terrain (height map)
         generateTerrain();
 
-        //place player
-        placePlayerOnTerrain();
-
         //place towns
         placeTownsOnTerrain();
+
+        //place player
+        placePlayerOnTerrain();
 
         //loop through x of terrain
         for (float x = 0; x < terrainSize.x; x+= xIncrement)
@@ -193,13 +193,18 @@ public class WildGenerator : MonoBehaviour {
     void placePlayerOnTerrain()
     {
         player.transform.position = new Vector3(player.transform.position.x, terrain.SampleHeight(new Vector3(player.transform.position.x, 0, player.transform.position.z)), player.transform.position.z);
+        flattern(player.transform.position, 1);
     }
 
     void placeTownsOnTerrain()
     {
         foreach(GameObject g in towns)
         {
-            g.transform.position = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)) + 6, g.transform.position.z);
+            Vector3 newPos = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)) + 6, g.transform.position.z);
+            Vector3 flatternPos = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)), g.transform.position.z);
+            
+            g.transform.position = newPos;
+            flattern(flatternPos, 5);
         }
     }
 
@@ -281,4 +286,51 @@ public class WildGenerator : MonoBehaviour {
         }
     }
 
+    public void flattern(Vector3 pos, int radius)
+    {
+        TerrainData terrData;
+
+        float[,] heightmapData; // prepare a matrix with terrain points
+        float ratio; // ratio between player position and terrain points
+        float ratioY; //height ratio
+
+        //update terrain
+        terrData = Terrain.activeTerrain.terrainData;
+        int terrRes = terrData.heightmapResolution;
+
+        Vector3 terrSize = terrData.size;
+
+        heightmapData = terrData.GetHeights(0, 0, terrRes, terrRes); // heights we will change during of walking
+
+        ratio = (terrSize.x) / terrRes;
+        ratioY = (terrSize.y) / terrRes;
+
+        //work out players position (player pos + terrain offset)
+        float playPosX = pos.x + (terrData.size.x / 2);
+        float playPosZ = pos.z + (terrData.size.z / 2);
+
+        //store players height
+        float playPosY = pos.y / terrRes;
+
+        //get terrain point based of player location
+        int terrainPointZ = Mathf.CeilToInt(playPosX / ratio) - 1;
+        int terrainPointX = Mathf.CeilToInt(playPosZ / ratio) - 1;
+
+        //get terrain height based on player location
+        float terrainPointY = (playPosY / ratioY);
+
+        //set height of terrain point under play to players height
+        heightmapData[terrainPointX, terrainPointZ] = terrainPointY;
+
+        //get set heights in radius of player
+        for (int x = terrainPointX - radius; x < terrainPointX + radius; x++)
+        {
+            for (int z = terrainPointZ - radius; z < terrainPointZ + radius; z++)
+            {
+                heightmapData[x, z] = terrainPointY;
+            }
+        }
+
+        terrData.SetHeights(0, 0, heightmapData); // save terrain heights back
+    }
 }
