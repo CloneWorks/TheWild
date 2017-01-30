@@ -8,8 +8,13 @@ public class GameManager : MonoBehaviour {
     public WorldClock time;
 
     public TerrainData terrain; 
-    public List<int> wildObjects;
-    public List<Vector3> wildLocations;
+    public List<int> wildObjects;       //store objects index number
+    public List<Vector3> wildLocations; //store objects location
+
+    public List<float> wildScales;        //store objects scale
+    public List<float> wildRotations; //store objects Quaternion.Euler rotation
+
+    public bool wildReset = false; //ensures a world update only happens once per new day
 
     void Awake()
     {
@@ -28,17 +33,15 @@ public class GameManager : MonoBehaviour {
 
         //Sets this to not be destroyed when reloading scene
         DontDestroyOnLoad(gameObject);
-
-        Debug.Log(PlayerPrefs.GetInt("WildExsists"));
     }
 
     void Update()
     {
-        if(time.IsNewDay())
+        if (time.IsNewDay() && !wildReset)
         {
-            //clear wild save
-            //PlayerPrefs.SetInt("WildExsists", 0);
+            wildReset = true;
         }
+
     }
 
     void OnApplicationQuit()
@@ -46,10 +49,25 @@ public class GameManager : MonoBehaviour {
         PlayerPrefs.SetInt("WildExsists", 0);
     }
 
-    public void saveWild(TerrainData t, List<int> o, List<Vector3> v)
+    public void saveWild(TerrainData t, List<int> o, List<Vector3> v, List<float> s, List<float> r)
     {
+        //store all data
         terrain = t;
         wildObjects = o;
         wildLocations = v;
+        wildScales = s;
+        wildRotations = r;
+
+        //mark wild as exsisting
+        PlayerPrefs.SetInt("WildExsists", 1);
+    }
+
+    public void clearSaves()
+    {
+        terrain = null;
+        wildObjects.Clear();
+        wildLocations.Clear();
+        wildScales.Clear();
+        wildRotations.Clear();
     }
 }

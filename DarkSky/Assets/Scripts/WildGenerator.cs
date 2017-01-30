@@ -6,7 +6,7 @@ public class WildGenerator : MonoBehaviour {
 
     //public variables
     [Header("Time Access")]
-    public WorldClock worldClock;
+    public WorldClock worldClock; //Holds a copy of the world clock
 
     [Header("Object Genration and Positioning")]
     public List<GameObject> objects; //a list of all plants/trees/bushes/stones which will be scattered around the wild
@@ -43,12 +43,13 @@ public class WildGenerator : MonoBehaviour {
     //private variables
     private List<GameObject> theWild = new List<GameObject>(); //a list of all the objects that exsist currently in the wild
 
+    //saved data about wild objects
     private List<int> theWildObjectSaves = new List<int>(); //Holds numbers representing each object in the wild
     private List<Vector3> theWildLoactionSaves = new List<Vector3>(); //holds the locations of each object in the wild
+    private List<float> theWildScaleSaves = new List<float>(); //holds the scale of each object in the wild
+    private List<float> theWildRotationSaves = new List<float>(); //holds the y rotation of each object in the wild
 
-    private bool wildReset = false; //ensures a world update only happens once per new day
-
-    private int numberOfObjects;
+    private int numberOfObjects;    //hold number of different objects to be placed throughout the wild
 
     //components
     private Terrain terrain;
@@ -65,6 +66,8 @@ public class WildGenerator : MonoBehaviour {
 
         gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 
+        worldClock = GameObject.FindGameObjectWithTag("Clock").GetComponent<WorldClock>();
+
         //set variables
         terrainSize = terrain.terrainData.size;
         terrainPosition = terrain.transform.position;
@@ -72,40 +75,25 @@ public class WildGenerator : MonoBehaviour {
         numberOfObjects = objects.Count;
 
         //start coroutines
-        StartCoroutine(checkWorldUpdate(worldClock.updateTimeInterval));
+        StartCoroutine(checkWorldUpdate(worldClock.updateTimeInterval)); // <---------------------------this is triggering when it shouldn't be
 
         //get towns
         GetTowns();
 
-        //check if there is a save
-        if(PlayerPrefs.GetInt("WildExsists") == 1)
+        //check if world needs update
+        if (worldResetCheck())
         {
-            Debug.Log("loading wild");
+            //regenrate the wild
+            generateWild();
 
-            //load wild
-            terrain.terrainData = gm.terrain;
-
-            for (int i = 0; i < gm.wildObjects.Count; i++ )
-            {
-                GameObject newObj = Instantiate(objects[gm.wildObjects[i]], gm.wildLocations[i], Quaternion.identity);
-                theWild.Add(newObj);
-            }
-
+            //mark reset
+            gm.wildReset = false;
         }
         else
         {
-            Debug.Log("creating wild");
-
-            //create wild
-            StartCoroutine(generateWild());
-
-            //save wild
-            gm.saveWild(terrain.terrainData, theWildObjectSaves, theWildLoactionSaves);
-
-            //mark wild as exsisting
-            PlayerPrefs.SetInt("WildExsists", 1);
+            //Load or generate world
+            createWorld();
         }
-        
 	}
 	
 	// Update is called once per frame
@@ -113,8 +101,58 @@ public class WildGenerator : MonoBehaviour {
 		
 	}
 
-    IEnumerator generateWild()
+    void createWorld()
     {
+        //check if there is a save
+        if (PlayerPrefs.GetInt("WildExsists") == 1)
+        {
+            //load save
+            loadWild();
+        }
+        //no save so create one
+        else if (PlayerPrefs.GetInt("WildExsists") != 1)
+        {
+            //create wild
+            generateWild();
+        }
+    }
+
+    public void loadWild()
+    {
+        Debug.Log("loading wild");
+
+        //load wild (this may not be needed as terrain data will save on the stored heightmap)
+        //terrain.terrainData.SetHeights(0, 0, gm.terrain.GetHeights(0, 0, gm.terrain.heightmapWidth, gm.terrain.heightmapHeight));  //terrain.terrainData.GetHeights();
+
+        //place towns
+        placeTownsOnTerrain();
+
+        //place player
+        placePlayerOnTerrain();
+
+        //re-populate objects
+        for (int i = 0; i < gm.wildObjects.Count; i++)
+        {
+            //create object
+            GameObject newObj = Instantiate(objects[gm.wildObjects[i]], gm.wildLocations[i], Quaternion.identity);
+
+            //scale it
+            newObj.transform.localScale = new Vector3(gm.wildScales[i], gm.wildScales[i], gm.wildScales[i]);
+
+            //rotate it
+            newObj.transform.eulerAngles = new Vector3(newObj.transform.eulerAngles.x, gm.wildRotations[i], newObj.transform.eulerAngles.z);
+
+            theWild.Add(newObj);
+        }
+    }
+
+    public void generateWild()
+    {
+        Debug.Log("creating wild");
+
+        //clear all lists
+        clearWild();
+
         //generate terrain (height map)
         generateTerrain();
 
@@ -169,18 +207,24 @@ public class WildGenerator : MonoBehaviour {
                         //save data
                         theWildObjectSaves.Add(randObj);
                         theWildLoactionSaves.Add(newObj.transform.position);
+                        theWildScaleSaves.Add(randScale);
+                        theWildRotationSaves.Add(yRotation);
+
                     }
                 }
                       
             }
         }
 
-        //place objects on terrain
-        //placeWildObjectsOnTerrain();
+        //ensure lists are clear for new data
+        //clearWild();
 
-        yield return null;
+        //save wild data into game manager
+        gm.saveWild(terrain.terrainData, theWildObjectSaves, theWildLoactionSaves, theWildScaleSaves, theWildRotationSaves);
+
     }
 
+    //clears all the objects in the wild and wipes saved data
     void clearWild()
     {
         //destroy every object
@@ -191,8 +235,16 @@ public class WildGenerator : MonoBehaviour {
 
         //clear list
         theWild.Clear();
+
+        //clear local saves
+        theWildObjectSaves.Clear();
+        theWildLoactionSaves.Clear();
+
+        //clear game manager saves
+        gm.clearSaves();
     }
 
+    //creates a random terrain using perlin noise
     void generateTerrain()
     {
         //The lower the numbers in the number range, the higher the hills/mountains will be...
@@ -212,28 +264,16 @@ public class WildGenerator : MonoBehaviour {
         }
 
         terrain.terrainData.SetHeights(0, 0, hts);
-
-        //This example shows how to flatten your entire terrain to a height of 20...
-
-        //TerrainData TD = terrain.terrainData;
-        //float[,] HeightMap = new float[TD.heightmapWidth, TD.heightmapHeight];
-        //for (int x = 0; x < TD.heightmapWidth; x++)
-        //{
-        //    for (int y = 0; y < TD.heightmapHeight; y++)
-        //    {
-        //        HeightMap[x, y] = 20;
-        //    }
-        //}
-
-        //TD.SetHeights(0, 0, HeightMap);
     }
 
+    //raises player to the height of the terrain at their position
     void placePlayerOnTerrain()
     {
         player.transform.position = new Vector3(player.transform.position.x, terrain.SampleHeight(new Vector3(player.transform.position.x, 0, player.transform.position.z)), player.transform.position.z);
         flattern(player.transform.position, 1);
     }
 
+    //raises all towns to the terrain height at their position
     void placeTownsOnTerrain()
     {
         foreach(GameObject g in towns)
@@ -246,6 +286,7 @@ public class WildGenerator : MonoBehaviour {
         }
     }
 
+    //raises all wild objects to the terrain height at their position
     void placeWildObjectsOnTerrain()
     {
         foreach(GameObject g in theWild)
@@ -253,6 +294,8 @@ public class WildGenerator : MonoBehaviour {
             g.transform.position = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)) + 6, g.transform.position.z);
         }
     }
+
+    //collects all towns in the scene
     void GetTowns()
     {
         GameObject[] TownsInScene = GameObject.FindGameObjectsWithTag("Town");
@@ -264,6 +307,7 @@ public class WildGenerator : MonoBehaviour {
         }
     }
 
+    //checks if an objects position is near a town
     bool NearATown(Vector3 objectBeingCreated)
     {
         float shortestDistanceToATown = float.MaxValue;
@@ -298,32 +342,43 @@ public class WildGenerator : MonoBehaviour {
         placeWildObjectsOnTerrain();
     }
 
+    //continuously checks if the world needs updating
     IEnumerator checkWorldUpdate(int updateWait)
     {
         while (true)
         {
-            yield return new WaitForSeconds(updateWait/2);
+            yield return new WaitForSeconds(updateWait);
 
-            //check if wild needs resetting
-            if (worldClock.IsNewDay() && !wildReset)
+            //Debug.Log("Time being checked is: " + worldClock.CurrentTime);
+            if (worldResetCheck())
             {
-                //clear the wild
-                clearWild();
-
                 //regenrate the wild
-                StartCoroutine(generateWild());
+                generateWild();
 
                 //mark reset
-                wildReset = true;
+                gm.wildReset = false;
             }
-            
-            if(!worldClock.IsNewDay())
+            else
             {
-                wildReset = false;
+                gm.wildReset = false;
             }
         }
     }
 
+    public bool worldResetCheck()
+    {
+        //check if wild needs resetting
+        if (gm.wildReset)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    //flatterns an area of terrain around a position
     public void flattern(Vector3 pos, int radius)
     {
         TerrainData terrData;
@@ -370,5 +425,23 @@ public class WildGenerator : MonoBehaviour {
         }
 
         terrData.SetHeights(0, 0, heightmapData); // save terrain heights back
+    }
+
+    //never worked and isn't used
+    public void oldTerrainCode()
+    {
+        //This example shows how to flatten your entire terrain to a height of 20...
+
+        //TerrainData TD = terrain.terrainData;
+        //float[,] HeightMap = new float[TD.heightmapWidth, TD.heightmapHeight];
+        //for (int x = 0; x < TD.heightmapWidth; x++)
+        //{
+        //    for (int y = 0; y < TD.heightmapHeight; y++)
+        //    {
+        //        HeightMap[x, y] = 20;
+        //    }
+        //}
+
+        //TD.SetHeights(0, 0, HeightMap);
     }
 }
