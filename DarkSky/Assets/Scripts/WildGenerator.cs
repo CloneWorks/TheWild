@@ -43,6 +43,9 @@ public class WildGenerator : MonoBehaviour {
     //private variables
     private List<GameObject> theWild = new List<GameObject>(); //a list of all the objects that exsist currently in the wild
 
+    private List<int> theWildObjectSaves = new List<int>(); //Holds numbers representing each object in the wild
+    private List<Vector3> theWildLoactionSaves = new List<Vector3>(); //holds the locations of each object in the wild
+
     private bool wildReset = false; //ensures a world update only happens once per new day
 
     private int numberOfObjects;
@@ -51,12 +54,16 @@ public class WildGenerator : MonoBehaviour {
     private Terrain terrain;
     private GameObject player;
 
+    private GameManager gm;
+
 	// Use this for initialization
 	void Start () {
 		//get components
         terrain = Terrain.activeTerrain;
 
         player = GameObject.FindGameObjectWithTag("Player");
+
+        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 
         //set variables
         terrainSize = terrain.terrainData.size;
@@ -70,8 +77,35 @@ public class WildGenerator : MonoBehaviour {
         //get towns
         GetTowns();
 
-        //create wild
-        StartCoroutine(generateWild());
+        //check if there is a save
+        if(PlayerPrefs.GetInt("WildExsists") == 1)
+        {
+            Debug.Log("loading wild");
+
+            //load wild
+            terrain.terrainData = gm.terrain;
+
+            for (int i = 0; i < gm.wildObjects.Count; i++ )
+            {
+                GameObject newObj = Instantiate(objects[gm.wildObjects[i]], gm.wildLocations[i], Quaternion.identity);
+                theWild.Add(newObj);
+            }
+
+        }
+        else
+        {
+            Debug.Log("creating wild");
+
+            //create wild
+            StartCoroutine(generateWild());
+
+            //save wild
+            gm.saveWild(terrain.terrainData, theWildObjectSaves, theWildLoactionSaves);
+
+            //mark wild as exsisting
+            PlayerPrefs.SetInt("WildExsists", 1);
+        }
+        
 	}
 	
 	// Update is called once per frame
@@ -131,6 +165,10 @@ public class WildGenerator : MonoBehaviour {
 
                         //add to objects in the wild list
                         theWild.Add(newObj);
+
+                        //save data
+                        theWildObjectSaves.Add(randObj);
+                        theWildLoactionSaves.Add(newObj.transform.position);
                     }
                 }
                       
