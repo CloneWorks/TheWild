@@ -5,6 +5,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
     public static GameManager instance = null;              //Static instance of GameManager which allows it to be accessed by any other script.
 
+    public WorldClock time;
+
     public TerrainData terrain; 
     public List<int> wildObjects;
     public List<Vector3> wildLocations;
@@ -28,6 +30,15 @@ public class GameManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 
         Debug.Log(PlayerPrefs.GetInt("WildExsists"));
+    }
+
+    void Update()
+    {
+        if(time.IsNewDay())
+        {
+            //clear wild save
+            //PlayerPrefs.SetInt("WildExsists", 0);
+        }
     }
 
     void OnApplicationQuit()
