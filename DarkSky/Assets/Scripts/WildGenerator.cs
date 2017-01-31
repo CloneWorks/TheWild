@@ -95,7 +95,13 @@ public class WildGenerator : MonoBehaviour {
             createWorld();
         }
 	}
-	
+
+    void OnApplicationQuit()
+    {
+        //flattern terrain when quiting
+        terrainHeight(0);
+    }
+
 	// Update is called once per frame
 	void Update () {
 		
@@ -425,6 +431,20 @@ public class WildGenerator : MonoBehaviour {
         }
 
         terrData.SetHeights(0, 0, heightmapData); // save terrain heights back
+    }
+
+    public void terrainHeight(float height)
+    {
+        float[,] hts = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
+        for (int i = 0; i < terrain.terrainData.heightmapWidth; i++)
+        {
+            for (int k = 0; k < terrain.terrainData.heightmapHeight; k++)
+            {
+                hts[i, k] = height;
+            }
+        }
+
+        terrain.terrainData.SetHeights(0, 0, hts);
     }
 
     //never worked and isn't used
