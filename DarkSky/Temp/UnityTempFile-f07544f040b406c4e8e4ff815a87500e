@@ -1,0 +1,146 @@
+-debug
+-target:library
+-nowarn:0169
+-langversion:4
+-out:Temp/Assembly-CSharp.dll
+-r:E:/unity5/Editor/Data/Managed/UnityEngine.dll
+-r:Library/ScriptAssemblies/Assembly-CSharp-firstpass.dll
+-r:E:/unity5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll
+-r:E:/unity5/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll
+-r:E:/unity5/Editor/Data/UnityExtensions/Unity/PlaymodeTestsRunner/UnityEngine.PlaymodeTestsRunner.dll
+-r:E:/unity5/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll
+-r:E:/unity5/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll
+-r:E:/unity5/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll
+-r:"Assets/Skybox/GUI Animator/Common/Plugins/GETween.dll"
+-r:"Assets/Skybox/GUI Animator/GUI Animator FREE/Plugins/GUIAnimatorFREE.dll"
+-r:E:/unity5/Editor/Data/Managed/UnityEditor.dll
+-r:E:/unity5/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll
+-r:E:/unity5/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Common.dll
+-define:UNITY_5_3_OR_NEWER
+-define:UNITY_5_4_OR_NEWER
+-define:UNITY_5_5_OR_NEWER
+-define:UNITY_5_5_0
+-define:UNITY_5_5
+-define:UNITY_5
+-define:ENABLE_AUDIO
+-define:ENABLE_CACHING
+-define:ENABLE_CLOTH
+-define:ENABLE_DUCK_TYPING
+-define:ENABLE_GENERICS
+-define:ENABLE_MICROPHONE
+-define:ENABLE_MULTIPLE_DISPLAYS
+-define:ENABLE_PHYSICS
+-define:ENABLE_SPRITERENDERER_FLIPPING
+-define:ENABLE_SPRITES
+-define:ENABLE_TERRAIN
+-define:ENABLE_RAKNET
+-define:ENABLE_UNET
+-define:ENABLE_LZMA
+-define:ENABLE_UNITYEVENTS
+-define:ENABLE_WEBCAM
+-define:ENABLE_WWW
+-define:ENABLE_CLOUD_SERVICES_COLLAB
+-define:ENABLE_CLOUD_SERVICES_ADS
+-define:ENABLE_CLOUD_HUB
+-define:ENABLE_CLOUD_PROJECT_ID
+-define:ENABLE_CLOUD_SERVICES_UNET
+-define:ENABLE_CLOUD_SERVICES_BUILD
+-define:ENABLE_CLOUD_LICENSE
+-define:ENABLE_EDITOR_METRICS
+-define:ENABLE_EDITOR_METRICS_CACHING
+-define:INCLUDE_DYNAMIC_GI
+-define:INCLUDE_GI
+-define:PLATFORM_SUPPORTS_MONO
+-define:RENDER_SOFTWARE_CURSOR
+-define:INCLUDE_PUBNUB
+-define:ENABLE_PLAYMODE_TESTS_RUNNER
+-define:ENABLE_SCRIPTING_NEW_CSHARP_COMPILER
+-define:UNITY_STANDALONE_WIN
+-define:UNITY_STANDALONE
+-define:ENABLE_SUBSTANCE
+-define:ENABLE_RUNTIME_GI
+-define:ENABLE_MOVIES
+-define:ENABLE_NETWORK
+-define:ENABLE_CRUNCH_TEXTURE_COMPRESSION
+-define:ENABLE_UNITYWEBREQUEST
+-define:ENABLE_CLOUD_SERVICES
+-define:ENABLE_CLOUD_SERVICES_ANALYTICS
+-define:ENABLE_CLOUD_SERVICES_PURCHASING
+-define:ENABLE_CLOUD_SERVICES_CRASH_REPORTING
+-define:ENABLE_EVENT_QUEUE
+-define:ENABLE_CLUSTERINPUT
+-define:ENABLE_VIDEO
+-define:ENABLE_VR
+-define:ENABLE_WEBSOCKET_HOST
+-define:ENABLE_MONO
+-define:ENABLE_PROFILER
+-define:DEBUG
+-define:TRACE
+-define:UNITY_ASSERTIONS
+-define:UNITY_EDITOR
+-define:UNITY_EDITOR_64
+-define:UNITY_EDITOR_WIN
+-define:UNITY_TEAM_LICENSE
+-define:CROSS_PLATFORM_INPUT
+"Assets/Player/Third Person Controller/Scripts/LevelScripts/ControlsTutorial.cs"
+"Assets/Player/Third Person Controller/Scripts/LevelScripts/HintManagement.cs"
+"Assets/Player/Third Person Controller/Scripts/LevelScripts/ThirdPersonOrbitCam.cs"
+"Assets/Player/Third Person Controller/Scripts/PlayerScripts/AimBehaviour.cs"
+"Assets/Player/Third Person Controller/Scripts/PlayerScripts/BasicBehaviour.cs"
+"Assets/Player/Third Person Controller/Scripts/PlayerScripts/FlyBehaviour.cs"
+"Assets/Player/Third Person Controller/Scripts/PlayerScripts/MoveBehaviour.cs"
+Assets/Scripts/DontDestroyOnLoad.cs
+Assets/Scripts/DontDestroySunAndMoon.cs
+Assets/Scripts/DungeonGenerator.cs
+Assets/Scripts/Flatter.cs
+Assets/Scripts/GameManager.cs
+Assets/Scripts/LoadNewScene.cs
+Assets/Scripts/LoadScene.cs
+Assets/Scripts/PlayerWeapon.cs
+Assets/Scripts/WildGenerator.cs
+Assets/Scripts/WorldClock.cs
+"Assets/Skybox/Fantasy Skybox FREE/Demo/Scripts/GE_FantasySkyboxFREE_Demo.cs"
+"Assets/Skybox/Fantasy Skybox FREE/Demo/Scripts/GE_FantasySkyboxFREE_UIs.cs"
+"Assets/Skybox/GE Common Assets/GE Orbit Camera/Scripts/GE_OrbitCamera.cs"
+"Assets/Skybox/GE Common Assets/GE Orbit Camera/Scripts/GE_OrbitCameraUI.cs"
+"Assets/Skybox/GE Common Assets/GE Toggle Full Screen/Scripts/GE_ToggleFullScreenUI.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/Characters/FirstPersonCharacter/Scripts/FirstPersonController.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/Characters/FirstPersonCharacter/Scripts/HeadBob.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/Characters/FirstPersonCharacter/Scripts/MouseLook.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/Characters/FirstPersonCharacter/Scripts/RigidbodyFirstPersonController.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/CrossPlatformInput/Scripts/AxisTouchButton.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/CrossPlatformInput/Scripts/ButtonHandler.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/CrossPlatformInput/Scripts/CameraSwitch.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/CrossPlatformInput/Scripts/CrossPlatformInputManager.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/CrossPlatformInput/Scripts/InputAxisScrollbar.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/CrossPlatformInput/Scripts/Joystick.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/CrossPlatformInput/Scripts/LevelReset.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/CrossPlatformInput/Scripts/MobileControlRig.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/CrossPlatformInput/Scripts/PlatformSpecific/MobileInput.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/CrossPlatformInput/Scripts/PlatformSpecific/StandaloneInput.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/CrossPlatformInput/Scripts/TiltInput.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/CrossPlatformInput/Scripts/TouchPad.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/CrossPlatformInput/Scripts/VirtualInput.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/Utility/CameraRefocus.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/Utility/CurveControlledBob.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/Utility/FOVKick.cs"
+"Assets/Skybox/GE Common Assets/GE Touch Joystick/Utility/LerpControlledBob.cs"
+"Assets/Skybox/GE Common Assets/Scripts/GE_UIResponder.cs"
+"Assets/Skybox/GUI Animator/GUI Animator FREE/Demo (CSharp)/Scripts/GA_FREE_Demo00.cs"
+"Assets/Skybox/GUI Animator/GUI Animator FREE/Demo (CSharp)/Scripts/GA_FREE_Demo01.cs"
+"Assets/Skybox/GUI Animator/GUI Animator FREE/Demo (CSharp)/Scripts/GA_FREE_Demo02.cs"
+"Assets/Skybox/GUI Animator/GUI Animator FREE/Demo (CSharp)/Scripts/GA_FREE_Demo03.cs"
+"Assets/Skybox/GUI Animator/GUI Animator FREE/Demo (CSharp)/Scripts/GA_FREE_Demo04.cs"
+"Assets/Skybox/GUI Animator/GUI Animator FREE/Demo (CSharp)/Scripts/GA_FREE_Demo05.cs"
+"Assets/Skybox/GUI Animator/GUI Animator FREE/Demo (CSharp)/Scripts/GA_FREE_Demo06.cs"
+"Assets/Skybox/GUI Animator/GUI Animator FREE/Demo (CSharp)/Scripts/GA_FREE_Demo07.cs"
+"Assets/Skybox/GUI Animator/GUI Animator FREE/Demo (CSharp)/Scripts/GA_FREE_Demo08.cs"
+"Assets/Skybox/GUI Animator/GUI Animator FREE/Demo (CSharp)/Scripts/GA_FREE_DemoPlaySound.cs"
+"Assets/Skybox/GUI Animator/GUI Animator FREE/Demo (CSharp)/Scripts/GA_FREE_OpenOtherScene.cs"
+"Assets/Skybox/GUI Animator/GUI Animator FREE/Demo Basic (CSharp)/Scripts/GUIAnimatorFREEDemo.cs"
+-r:E:\unity5\Editor\Data\MonoBleedingEdge\lib\mono\unity\System.Runtime.Serialization.dll
+-r:E:\unity5\Editor\Data\MonoBleedingEdge\lib\mono\unity\System.Xml.Linq.dll
+-r:E:\unity5\Editor\Data\MonoBleedingEdge\lib\mono\unity\UnityScript.dll
+-r:E:\unity5\Editor\Data\MonoBleedingEdge\lib\mono\unity\UnityScript.Lang.dll
+-r:E:\unity5\Editor\Data\MonoBleedingEdge\lib\mono\unity\Boo.Lang.dll
+-sdk:unity
