@@ -26,9 +26,9 @@ public class DungeonGenerator : MonoBehaviour {
     public int worldArea;
     public int NumberOfAttemptsToCreateRooms;
 
-    private List<GameObject> dungeon = new List<GameObject>(); //holds every part of the dungeon created so far
+    public List<GameObject> dungeon = new List<GameObject>(); //holds every part of the dungeon created so far
     private int numberOfDungeonParts; //Holds number of dungeon parts
-    private float hallwayRadius; //Holds the radius of hallway pieces
+    private int hallwayRadius; //Holds the radius of hallway pieces
 
 	// Use this for initialization
 	void Start () {
@@ -39,11 +39,13 @@ public class DungeonGenerator : MonoBehaviour {
         numberOfDungeonParts = dungeonParts.Count;
 
         //get hallway data
-        hallwayRadius = dungeonHallways[0].GetComponent<SphereCollider>().radius;
+        hallwayRadius = (int)dungeonHallways[0].GetComponent<SphereCollider>().radius;
 
         //create the dungeon
         //createDungeonMethod0();
         createDungeonMethod1();
+
+        debugDungeonLocations();
 	}
 	
 	// Update is called once per frame
@@ -63,11 +65,11 @@ public class DungeonGenerator : MonoBehaviour {
         Vector3 roomPos = Vector3.zero;
 
         //Gameobject to hold new dungeon room
-        GameObject newRoom;
+        GameObject newRoom = null;
 
         //place entrance
-        roomPos = newPosition(worldArea);
-        newRoom = createDungeonPiece(dungeonEntrance, roomPos);
+        newRoom = createDungeonPiece(dungeonEntrance, newPosition(worldArea));
+        dungeon.Add(newRoom);
 
         //place player at entrance
         player.transform.position = newRoom.transform.position;
@@ -77,8 +79,8 @@ public class DungeonGenerator : MonoBehaviour {
         Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, newRoom.transform.eulerAngles.y, Camera.main.transform.eulerAngles.z); //<--------this doesn't seem to work
 
         //place exit
-        roomPos = newPosition(worldArea);
-        newRoom = createDungeonPiece(dungeonExit, roomPos);
+        newRoom = createDungeonPiece(dungeonExit, newPosition(worldArea));
+        dungeon.Add(newRoom);
 
         //attempt to randomly place rooms in the world
         while (attempts < NumberOfAttemptsToCreateRooms && currentRooms != totalRooms)
@@ -89,27 +91,27 @@ public class DungeonGenerator : MonoBehaviour {
             //randomly pick an X and a Z position in the world area:
             roomPos = newPosition(worldArea);
 
-            //create a room at that point
-            if (!isCollisionInRadius(roomPos, (dungeonRooms[roomPicked].GetComponent<SphereCollider>().radius)))
+            //create a room at that point if there are no collisions with it
+            if (!isCollisionInRadius(roomPos, (int)(dungeonRooms[roomPicked].GetComponent<SphereCollider>().radius)))
             {
                 newRoom = Instantiate(dungeonRooms[roomPicked], roomPos, dungeonRooms[roomPicked].transform.rotation);
 
                 //pick a random rotation
                 float yRotation = random90DegreeRotation();
                 newRoom.transform.eulerAngles = new Vector3(newRoom.transform.eulerAngles.x, yRotation, newRoom.transform.eulerAngles.z);
+
+                //tally room
+                currentRooms++;
+
+                //set parent to dungeon
+                newRoom.transform.parent = transform;
+
+                //add room to dungeon
+                dungeon.Add(newRoom);
             }
-            
-            //tally room
-            currentRooms++;
 
             //tally attempt
             attempts++;
-
-            //set parent to dungeon
-            newRoom.transform.parent = transform;
-
-            //add room to dungeon
-            dungeon.Add(newRoom);
         }
     }
 
@@ -122,53 +124,60 @@ public class DungeonGenerator : MonoBehaviour {
     /// <returns></returns>
     public GameObject createDungeonPiece(GameObject dungeonPiece, Vector3 position)
     {
-        GameObject newRoom = null;
+        
+        int pieceRadius = (int)dungeonPiece.GetComponent<SphereCollider>().radius;
+        int newX;
+        int newZ;
+
+        //Debug.Log("Position of " + dungeonPiece.name + "is: " + position);
 
         //while there is a collision in radius of dungeonpiece move it
-        while(isCollisionInRadius(position, dungeonPiece.GetComponent<SphereCollider>().radius))
+        while (isCollisionInRadius(position, pieceRadius)) //while (collisionObjDistance != int.MaxValue) //
         {
-            Debug.Log("Entrance or exit collided with something! Trying to correct position.");
-
-            float newX;
-            float newZ;
-
+            //calculate a new X position
             if(Random.Range(0,2) == 0)
             {
-                newX = position.x + (hallwayRadius * 2) + dungeonPiece.GetComponent<SphereCollider>().radius;
+                newX = (int)position.x + (int)(hallwayRadius * 2) + (pieceRadius*2); //+ (int)collisionObjDistance;
             }
             else
             {
-                newX = position.x - (hallwayRadius * 2) - dungeonPiece.GetComponent<SphereCollider>().radius;
+                newX = (int)position.x - (int)(hallwayRadius * 2) - (pieceRadius * 2); //- (int)collisionObjDistance;
             }
 
+            //calculate a new Z position
             if (Random.Range(0, 2) == 0)
             {
-                newZ = position.z + (hallwayRadius * 2) + dungeonPiece.GetComponent<SphereCollider>().radius;
+                newZ = (int)position.z + (int)(hallwayRadius * 2) + (pieceRadius * 2); //+ (int)collisionObjDistance;
             }
             else
             {
-                newZ = position.z - (hallwayRadius * 2) - dungeonPiece.GetComponent<SphereCollider>().radius;
+                newZ = (int)position.z - (int)(hallwayRadius * 2) - (pieceRadius * 2); //- (int)collisionObjDistance;
             }
 
-            position = new Vector3(newX, position.y, newZ);
+            //update position to the newly calulated one
+            position = new Vector3(newX, 0, newZ);
+
+            //Debug.Log(dungeonPiece.name + " moved here: " + position);
         }
 
-        //piece must be in a good location, so palce it:
-        newRoom = Instantiate(dungeonEntrance, position, dungeonEntrance.transform.rotation);
-        newRoom.transform.parent = transform;
+        //piece must be in a good location, so place it:
+        GameObject pieceToCreate = Instantiate(dungeonPiece, position, dungeonPiece.transform.rotation);
+        pieceToCreate.transform.parent = transform;
 
         //pick a random rotation
-        float yRotation = random90DegreeRotation();
-        newRoom.transform.eulerAngles = new Vector3(newRoom.transform.eulerAngles.x, yRotation, newRoom.transform.eulerAngles.z);
+        int yRotation = random90DegreeRotation();
+        pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
 
-        dungeon.Add(newRoom);
-
-        return newRoom;
+        return pieceToCreate;
     }
 
-    public float random90DegreeRotation()
+    /// <summary>
+    /// Returns a random rotation out of (0, 90, 180, and 270)
+    /// </summary>
+    /// <returns></returns>
+    public int random90DegreeRotation()
     {
-        return Random.Range(0, 4) * 90;
+        return (int)(Random.Range(0, 4) * 90);
     }
 
     /// <summary>
@@ -178,20 +187,22 @@ public class DungeonGenerator : MonoBehaviour {
     /// <returns></returns>
     public Vector3 newPosition(int range)
     {
-        int randX = positionFitsHallway(Random.Range(-range, range));
-        int randZ = positionFitsHallway(Random.Range(-range, range));
+        int randX = positionFitsHallway(Random.Range(-range, range + 1));
+        int randZ = positionFitsHallway(Random.Range(-range, range + 1));
         return new Vector3(randX, 0, randZ);
     }
 
     /// <summary>
-    /// Ensures that a new object isn't being placed inside another object and is leaving enough gap to be connected by a hallway
+    /// Ensures that a new dungeon object isn't being placed inside another dungeon object and is leaving enough gap to be connected by a hallway
     /// </summary>
     /// <param name="center"></param>
     /// <param name="radius"></param>
     /// <returns></returns>
-    public bool isCollisionInRadius(Vector3 center, float radius)
+    public bool isCollisionInRadius(Vector3 center, int radius)
     {
-        Collider[] hitColliders = Physics.OverlapSphere(center, radius + (hallwayRadius*2));
+        int layerMask = 1 << 8; //only look for collisions on dungeon layer
+
+        Collider[] hitColliders = Physics.OverlapSphere(center, radius + (hallwayRadius*2), layerMask);
 
         if(hitColliders.Length != 0)
         {
@@ -204,13 +215,69 @@ public class DungeonGenerator : MonoBehaviour {
     }
 
     /// <summary>
+    /// Returns the closest collided dungeon object
+    /// </summary>
+    /// <returns></returns>
+    public int DistanceToClosestObjectsInCollisionRadius(Vector3 center, int radius)
+    {
+        int layerMask = 1 << 8; //only look for collisions on dungeon layer
+
+        Collider[] hitColliders = Physics.OverlapSphere(center, radius + (hallwayRadius * 2), layerMask);
+
+        int closest = int.MaxValue;
+
+        foreach(Collider c in hitColliders)
+        {
+            int distanceBetweenObjectAndMe = Mathf.RoundToInt(Vector3.Distance(c.transform.position, center));
+
+            if(distanceBetweenObjectAndMe < closest)
+            {
+                closest = distanceBetweenObjectAndMe;
+            }
+        }
+
+        return closest;
+    }
+
+    /// <summary>
     /// Ensures that the randomly chosen position fits on a grid of hallway sizes
     /// </summary>
     /// <param name="myPos"></param>
     /// <returns></returns>
-    public int positionFitsHallway(float myPos)
+    public int positionFitsHallway(int myPos)
     {
-        return Mathf.CeilToInt(myPos * (hallwayRadius*2));
+        int hallwaySize = (int)(hallwayRadius * 2);
+        if ((myPos % hallwaySize) == 0)
+        {
+            return myPos;
+        }
+        else
+        {
+            return myPos * hallwaySize;
+        }
+    }
+
+    public void debugDungeonLocations()
+    {
+        bool notOnGrid = false;
+
+        foreach(GameObject g in dungeon)
+        {
+            //if x or z position doesn't divide into hallway size the piece isn't on the grid
+            if (g.transform.position.x % (hallwayRadius * 2) != 0 || g.transform.position.z % (hallwayRadius * 2) != 0)
+            {
+                notOnGrid = true;
+            }
+        }
+
+        if(notOnGrid)
+        {
+            Debug.Log("A dungeon piece isn't on a grid loaction.");
+        }
+        else
+        {
+            Debug.Log("All dungeon pieces are on the grid.");
+        }
     }
 
     public void createDungeonMethod0(){
