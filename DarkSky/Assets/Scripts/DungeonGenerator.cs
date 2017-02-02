@@ -28,6 +28,7 @@ public class DungeonGenerator : MonoBehaviour {
 
     private List<GameObject> dungeon = new List<GameObject>(); //holds every part of the dungeon created so far
     private int numberOfDungeonParts; //Holds number of dungeon parts
+    private float hallwayRadius; //Holds the radius of hallway pieces
 
 	// Use this for initialization
 	void Start () {
@@ -36,6 +37,9 @@ public class DungeonGenerator : MonoBehaviour {
 
         //get number of dungeon parts
         numberOfDungeonParts = dungeonParts.Count;
+
+        //get hallway data
+        hallwayRadius = dungeonHallways[0].GetComponent<SphereCollider>().radius;
 
         //create the dungeon
         //createDungeonMethod0();
@@ -55,10 +59,6 @@ public class DungeonGenerator : MonoBehaviour {
         int totalRooms = Random.Range(minNumberOfRooms, maxNumberOfRooms + 1);
         int currentRooms = 0;
 
-        //values for holding random x and z
-        int randX;
-        int randZ;
-
         //vector to hold the new position
         Vector3 roomPos = Vector3.zero;
 
@@ -66,23 +66,19 @@ public class DungeonGenerator : MonoBehaviour {
         GameObject newRoom;
 
         //place entrance
-        randX = Random.Range(-worldArea, worldArea);
-        randZ = Random.Range(-worldArea, worldArea);
-        roomPos = new Vector3(randX, 0, randZ);
-        newRoom = Instantiate(dungeonEntrance, roomPos, dungeonEntrance.transform.rotation);
-        newRoom.transform.parent = transform;
-        dungeon.Add(newRoom);
+        roomPos = newPosition(worldArea);
+        newRoom = createDungeonPiece(dungeonEntrance, roomPos);
 
         //place player at entrance
         player.transform.position = newRoom.transform.position;
 
+        //align players Y rotation with entrance and camera
+        player.transform.eulerAngles = new Vector3(player.transform.eulerAngles.x, newRoom.transform.eulerAngles.y, player.transform.eulerAngles.z);
+        Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, newRoom.transform.eulerAngles.y, Camera.main.transform.eulerAngles.z); //<--------this doesn't seem to work
+
         //place exit
-        randX = Random.Range(-worldArea, worldArea);
-        randZ = Random.Range(-worldArea, worldArea);
-        roomPos = new Vector3(randX, 0, randZ);
-        newRoom = Instantiate(dungeonExit, roomPos, dungeonExit.transform.rotation);
-        newRoom.transform.parent = transform;
-        dungeon.Add(newRoom);
+        roomPos = newPosition(worldArea);
+        newRoom = createDungeonPiece(dungeonExit, roomPos);
 
         //attempt to randomly place rooms in the world
         while (attempts < NumberOfAttemptsToCreateRooms && currentRooms != totalRooms)
@@ -90,16 +86,17 @@ public class DungeonGenerator : MonoBehaviour {
             //Choose a random room
             int roomPicked = Random.Range(0, dungeonRooms.Count);
 
-            //randomly pick and X and a Z position in the world area:
-            randX = Random.Range(-worldArea, worldArea);
-            randZ = Random.Range(-worldArea, worldArea);
-            roomPos = new Vector3(randX, 0, randZ);
+            //randomly pick an X and a Z position in the world area:
+            roomPos = newPosition(worldArea);
 
             //create a room at that point
-            //Debug.Log(dungeonRooms[roomPicked].GetComponent<SphereCollider>().radius);
             if (!isCollisionInRadius(roomPos, (dungeonRooms[roomPicked].GetComponent<SphereCollider>().radius)))
             {
                 newRoom = Instantiate(dungeonRooms[roomPicked], roomPos, dungeonRooms[roomPicked].transform.rotation);
+
+                //pick a random rotation
+                float yRotation = random90DegreeRotation();
+                newRoom.transform.eulerAngles = new Vector3(newRoom.transform.eulerAngles.x, yRotation, newRoom.transform.eulerAngles.z);
             }
             
             //tally room
@@ -116,9 +113,46 @@ public class DungeonGenerator : MonoBehaviour {
         }
     }
 
+    public GameObject createDungeonPiece(GameObject dungeonPiece, Vector3 position)
+    {
+        GameObject newRoom = Instantiate(dungeonEntrance, position, dungeonEntrance.transform.rotation);
+        newRoom.transform.parent = transform;
+
+        //pick a random rotation
+        float yRotation = random90DegreeRotation();
+        newRoom.transform.eulerAngles = new Vector3(newRoom.transform.eulerAngles.x, yRotation, newRoom.transform.eulerAngles.z);
+
+        dungeon.Add(newRoom);
+
+        return newRoom;
+    }
+
+    public float random90DegreeRotation()
+    {
+        return Random.Range(0, 4) * 90;
+    }
+
+    /// <summary>
+    /// Takes a range such as the world size and returns a random point either side of 0 for that area
+    /// </summary>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    public Vector3 newPosition(int range)
+    {
+        int randX = positionFitsHallway(Random.Range(-range, range));
+        int randZ = positionFitsHallway(Random.Range(-range, range));
+        return new Vector3(randX, 0, randZ);
+    }
+
+    /// <summary>
+    /// Ensures that a new object isn't being placed inside another object and is leaving enough gap to be connected by a hallway
+    /// </summary>
+    /// <param name="center"></param>
+    /// <param name="radius"></param>
+    /// <returns></returns>
     public bool isCollisionInRadius(Vector3 center, float radius)
     {
-        Collider[] hitColliders = Physics.OverlapSphere(center, radius);
+        Collider[] hitColliders = Physics.OverlapSphere(center, radius + (hallwayRadius*2));
 
         if(hitColliders.Length != 0)
         {
@@ -129,6 +163,17 @@ public class DungeonGenerator : MonoBehaviour {
             return false;
         }
     }
+
+    /// <summary>
+    /// Ensures that the randomly chosen position fits on a grid of hallway sizes
+    /// </summary>
+    /// <param name="myPos"></param>
+    /// <returns></returns>
+    public int positionFitsHallway(float myPos)
+    {
+        return Mathf.CeilToInt(myPos * (hallwayRadius*2));
+    }
+
     public void createDungeonMethod0(){
         //create a 3D array of ints related to dungeon parts 
         for (int i = 0; i < floors; i++) //loop through number of floors
