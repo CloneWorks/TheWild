@@ -113,9 +113,48 @@ public class DungeonGenerator : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Forces the piece to be created. Good for entrance and exit as they must exsist, also good for other rooms that
+    /// need to exsist as part of level design. (might want to include the radius of the object it collided with rather than its own!!)
+    /// </summary>
+    /// <param name="dungeonPiece"></param>
+    /// <param name="position"></param>
+    /// <returns></returns>
     public GameObject createDungeonPiece(GameObject dungeonPiece, Vector3 position)
     {
-        GameObject newRoom = Instantiate(dungeonEntrance, position, dungeonEntrance.transform.rotation);
+        GameObject newRoom = null;
+
+        //while there is a collision in radius of dungeonpiece move it
+        while(isCollisionInRadius(position, dungeonPiece.GetComponent<SphereCollider>().radius))
+        {
+            Debug.Log("Entrance or exit collided with something! Trying to correct position.");
+
+            float newX;
+            float newZ;
+
+            if(Random.Range(0,2) == 0)
+            {
+                newX = position.x + (hallwayRadius * 2) + dungeonPiece.GetComponent<SphereCollider>().radius;
+            }
+            else
+            {
+                newX = position.x - (hallwayRadius * 2) - dungeonPiece.GetComponent<SphereCollider>().radius;
+            }
+
+            if (Random.Range(0, 2) == 0)
+            {
+                newZ = position.z + (hallwayRadius * 2) + dungeonPiece.GetComponent<SphereCollider>().radius;
+            }
+            else
+            {
+                newZ = position.z - (hallwayRadius * 2) - dungeonPiece.GetComponent<SphereCollider>().radius;
+            }
+
+            position = new Vector3(newX, position.y, newZ);
+        }
+
+        //piece must be in a good location, so palce it:
+        newRoom = Instantiate(dungeonEntrance, position, dungeonEntrance.transform.rotation);
         newRoom.transform.parent = transform;
 
         //pick a random rotation
