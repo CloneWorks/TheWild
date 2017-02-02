@@ -50,7 +50,7 @@ public class PlayerWeapon : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         //player attacks
-        if (Input.GetButtonDown("Fire1") && !animator.GetBool(attackBool))
+        if (Input.GetButtonDown("Fire1") && !attack && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("standing_melee_attack_downward"))
         {
             attack = true;
 
