@@ -9,7 +9,7 @@ public class DungeonGenerator : MonoBehaviour {
     public Transform dungeonMaxBound;
     public Transform dungeonMinBound;
 
-    public float gridSize;
+    public float gridCellSize;
 
     [Tooltip("Entrance piece must be first, Exit piece must be second")]
     public List<GameObject> dungeonParts; //a list to hold all hallways and rooms
@@ -47,10 +47,10 @@ public class DungeonGenerator : MonoBehaviour {
         hallwayRadius = (int)dungeonHallways[0].GetComponent<SphereCollider>().radius;
 
         //set grid size
-        gridSize = hallwayRadius * 2;
+        gridCellSize = hallwayRadius * 2;
 
         //set min and max bound to worldArea
-        int actualWorldArea = worldArea * (int)gridSize * 2;
+        int actualWorldArea = worldArea * (int)gridCellSize * 2;
         dungeonMaxBound.position = new Vector3(actualWorldArea, 0, actualWorldArea);
         dungeonMinBound.position = new Vector3(-actualWorldArea, 0, -actualWorldArea);
 
