@@ -6,6 +6,11 @@ public class DungeonGenerator : MonoBehaviour {
 
     public GameObject player;
 
+    public Transform dungeonMaxBound;
+    public Transform dungeonMinBound;
+
+    public float gridSize;
+
     [Tooltip("Entrance piece must be first, Exit piece must be second")]
     public List<GameObject> dungeonParts; //a list to hold all hallways and rooms
 
@@ -41,11 +46,19 @@ public class DungeonGenerator : MonoBehaviour {
         //get hallway data
         hallwayRadius = (int)dungeonHallways[0].GetComponent<SphereCollider>().radius;
 
+        //set grid size
+        gridSize = hallwayRadius * 2;
+
+        //set min and max bound to worldArea
+        int actualWorldArea = worldArea * (int)gridSize * 2;
+        dungeonMaxBound.position = new Vector3(actualWorldArea, 0, actualWorldArea);
+        dungeonMinBound.position = new Vector3(-actualWorldArea, 0, -actualWorldArea);
+
         //create the dungeon
         //createDungeonMethod0();
         createDungeonMethod1();
 
-        debugDungeonLocations();
+        //debugDungeonLocations();
 	}
 	
 	// Update is called once per frame
