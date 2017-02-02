@@ -202,7 +202,7 @@ public class DungeonGenerator : MonoBehaviour {
     {
         int layerMask = 1 << 8; //only look for collisions on dungeon layer
 
-        Collider[] hitColliders = Physics.OverlapSphere(center, radius + (hallwayRadius*2), layerMask);
+        Collider[] hitColliders = Physics.OverlapSphere(center, radius + (hallwayRadius*2) * 2, layerMask);
 
         if(hitColliders.Length != 0)
         {
