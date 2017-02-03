@@ -8,7 +8,7 @@ using System.Linq;
 /// </summary>
 public class AStar2D : MonoBehaviour {
 
-	public World world;//!< Stores a refrence to an instance of the world (holds all the gird that represents the world)
+	public World world = null;//!< Stores a refrence to an instance of the world (holds all the gird that represents the world)
 
 	public List<node> openList; //!< list of nodes that need to be checked
 	public List<node> closedList; //!< list of nodes that have been checked
@@ -20,8 +20,95 @@ public class AStar2D : MonoBehaviour {
 	public node[,,] localWorldArray; //!< stops all objects using Astar from changing each others values by storing and using a local copy of the world array
 	List<Vector3> neighborPos = new List<Vector3>();//!< List of vectors that helps locate a nodes neighbours
 
-	//List<node> path = new List<node>();
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	List<node> path = new List<node>();
 
+	public string Ax = "";
+	public string Ay = "";
+	
+	public string Bx = "";
+	public string By = "";
+	
+	public bool started = false;
+	public GameObject floorTile = null;
+	
+	
+    void OnGUI() {
+        Ax = GUI.TextField(new Rect(50, 10, 160, 20), Ax, 25);
+		Ay = GUI.TextField(new Rect(50, 10+20, 160, 20), Ay, 25);
+		
+		Bx = GUI.TextField(new Rect(50, 10+20+20, 160, 20), Bx, 25);
+		By = GUI.TextField(new Rect(50, 10+20+20+20, 160, 20), By, 25);
+		
+		GUI.Label(new Rect(10, 10, 50, 20), "A X:");
+		GUI.Label(new Rect(10, 10+20, 50, 20), "A Y:");
+		  
+		GUI.Label(new Rect(10, 10+20+20, 50, 20), "B X:");
+		GUI.Label(new Rect(10, 10+20+20+20, 50, 20), "B Y:");
+			
+		 if (GUI.Button(new Rect(10+200, 10, 200, 80), "Calculate path")){
+			 
+			 path = new List<node>();
+			 
+			 cloneWorldArrayIntoLocal ();
+			 started = true;
+			 //quickLocalArrayReset();
+			 
+			 Vector3 startPos = new Vector3(int.Parse(Ax),0,int.Parse(Ay));
+			 startPos = world.WorldToArrayPosition (startPos);
+			 startPos.y = 0;
+			 node start = localWorldArray [(int)startPos.x, (int)startPos.y, (int)startPos.z];
+			 
+			 Vector3 goalPos = new Vector3(int.Parse(Bx),1,int.Parse(By));
+			 goalPos = world.WorldToArrayPosition (goalPos);
+			 goalPos.y = 0;
+			 node goal = localWorldArray [(int)goalPos.x, (int)goalPos.y, (int)goalPos.z];
+			 
+			 path = findPath(start, goal);
+			 
+			 foreach (node n in path){
+				 if(n != null){
+					Vector3 position = world.ArrayToWorldPosition(n.nodePos, false);
+					position.y = 0;
+					//piece must be in a good location, so place it:
+					GameObject pieceToCreate = Instantiate(floorTile, position, floorTile.transform.rotation);
+					pieceToCreate.transform.parent = transform;
+
+					//pick a random rotation
+					int yRotation = random90DegreeRotation();
+					pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+				 }
+			 }
+		 }
+            
+    }
+	/// <summary>
+    /// Returns a random rotation out of (0, 90, 180, and 270)
+    /// </summary>
+    /// <returns></returns>
+    public int random90DegreeRotation()
+    {
+        return (int)(Random.Range(0, 4) * 90);
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/// <summary>
 	/// Used for initialization. sets neighbours directions in neighbourPos list and makes a instance of the world array
 	/// Only adds directions of the neighbours on a single plane
@@ -125,6 +212,9 @@ public class AStar2D : MonoBehaviour {
 	//used for debugging
 	
 	void OnDrawGizmos() { //Selected
+		if (started){
+			
+			
 		//Color blue = new Color(0, 0, 1, 0.1F);
 		//Color red = new Color(1, 0, 0, 0.5F);
 		//Color green = new Color (0,1,0,0.5f);
@@ -148,6 +238,8 @@ public class AStar2D : MonoBehaviour {
 					}
 				}
 			}
+		}
+		
 		}
 	}
 
