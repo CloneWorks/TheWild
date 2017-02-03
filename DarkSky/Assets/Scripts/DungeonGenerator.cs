@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class DungeonGenerator : MonoBehaviour {
 
+	public World world; //links the world generator (grid for making halls)
+	
     public GameObject player;
 
     public Transform dungeonMaxBound;
@@ -51,14 +53,18 @@ public class DungeonGenerator : MonoBehaviour {
 
         //set min and max bound to worldArea
         int actualWorldArea = worldArea * (int)gridCellSize * 2;
-        dungeonMaxBound.position = new Vector3(actualWorldArea, 0, actualWorldArea);
-        dungeonMinBound.position = new Vector3(-actualWorldArea, 0, -actualWorldArea);
+        dungeonMaxBound.position = new Vector3(actualWorldArea + gridCellSize/2, gridCellSize, actualWorldArea + gridCellSize/2);
+        dungeonMinBound.position = new Vector3(-actualWorldArea - gridCellSize/2, 0, -actualWorldArea - gridCellSize/2);
 
         //create the dungeon
         //createDungeonMethod0();
         createDungeonMethod1();
 
         //debugDungeonLocations();
+		
+		//create world grid for generating hallways
+		world.gridCellSize = gridCellSize;
+		world.AwakeMe();
 	}
 	
 	// Update is called once per frame
