@@ -13,6 +13,8 @@ public class DungeonGenerator : MonoBehaviour {
 
     public float gridCellSize;
 
+    public List<GameObject> doors = new List<GameObject>();
+
     [Tooltip("Entrance piece must be first, Exit piece must be second")]
     public List<GameObject> dungeonParts; //a list to hold all hallways and rooms
 
@@ -64,6 +66,7 @@ public class DungeonGenerator : MonoBehaviour {
 		
 		//create world grid for generating hallways
 		world.gridCellSize = gridCellSize;
+
 		world.AwakeMe();
 	}
 	
@@ -89,6 +92,7 @@ public class DungeonGenerator : MonoBehaviour {
         //place entrance
         newRoom = createDungeonPiece(dungeonEntrance, newPosition(worldArea));
         dungeon.Add(newRoom);
+        addDoors(newRoom);
 
         //place player at entrance
         player.transform.position = newRoom.transform.position;
@@ -100,6 +104,7 @@ public class DungeonGenerator : MonoBehaviour {
         //place exit
         newRoom = createDungeonPiece(dungeonExit, newPosition(worldArea));
         dungeon.Add(newRoom);
+        addDoors(newRoom);
 
         //attempt to randomly place rooms in the world
         while (attempts < NumberOfAttemptsToCreateRooms && currentRooms != totalRooms)
@@ -127,6 +132,9 @@ public class DungeonGenerator : MonoBehaviour {
 
                 //add room to dungeon
                 dungeon.Add(newRoom);
+
+                //add rooms doors to door list
+                addDoors(newRoom);
             }
 
             //tally attempt
@@ -188,6 +196,17 @@ public class DungeonGenerator : MonoBehaviour {
         pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
 
         return pieceToCreate;
+    }
+
+    public void addDoors(GameObject room)
+    {
+        foreach(Transform child in room.GetComponentsInChildren<Transform>())
+        {
+            if(child.tag == "Doorway")
+            {
+                doors.Add(child.gameObject);
+            }
+        }
     }
 
     /// <summary>
