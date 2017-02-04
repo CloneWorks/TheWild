@@ -318,6 +318,51 @@ public class DungeonGenerator : MonoBehaviour {
         }
     }
 
+    public void createHallways()
+    {
+        int Ax = 0;
+        int Ay = 0;
+
+        int Bx = 0;
+        int By = 0;
+
+        AStar2D aStar = new AStar2D();
+
+        List<node> path = new List<node>();
+
+        aStar.cloneWorldArrayIntoLocal();
+
+        while (doors.Count > 0)
+        {
+            Vector3 startPos = new Vector3(Ax, 0, Ay);
+            startPos = world.WorldToArrayPosition(startPos);
+            startPos.y = 0;
+            node start = aStar.localWorldArray[(int)startPos.x, (int)startPos.y, (int)startPos.z];
+
+            Vector3 goalPos = new Vector3(Bx, 1, By);
+            goalPos = world.WorldToArrayPosition(goalPos);
+            goalPos.y = 0;
+            node goal = aStar.localWorldArray[(int)goalPos.x, (int)goalPos.y, (int)goalPos.z];
+
+            path = aStar.findPath(start, goal);
+
+            foreach (node n in path)
+            {
+                if (n != null)
+                {
+                    Vector3 position = world.ArrayToWorldPosition(n.nodePos, false);
+                    position.y = 0;
+                    //piece must be in a good location, so place it:
+                    GameObject pieceToCreate = Instantiate(dungeonHallways[0], position, dungeonHallways[0].transform.rotation);
+                    pieceToCreate.transform.parent = transform;
+
+                    //pick a random rotation
+                    int yRotation = random90DegreeRotation();
+                    pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+                }
+            }
+        }
+    }
     public void createDungeonMethod0(){
         //create a 3D array of ints related to dungeon parts 
         for (int i = 0; i < floors; i++) //loop through number of floors
