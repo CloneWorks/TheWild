@@ -107,7 +107,7 @@ public class World : MonoBehaviour {
     /// Draws gizmos in the scene view for each node in the world array
     /// </summary>
 	
-	/*void OnDrawGizmos() { //Selected
+	void OnDrawGizmos() { //Selected
 		Color blue = new Color(0, 0, 1, 0.1F);
 		Color red = new Color(1, 0, 0, 0.5F);
 		Color green = new Color (0,1,0,0.5f);
@@ -134,7 +134,7 @@ public class World : MonoBehaviour {
 				}
 			}
 		}
-	}*/
+	}
 
 
 
@@ -305,7 +305,7 @@ public class World : MonoBehaviour {
 			for(int j = 0; j < cellAmount.y; j++){ //j is cycling through y
 				for (int k = 0; k < cellAmount.z; k++) {
 					Vector3 worldPoint = ArrayToWorldPosition (new Vector3 (i, j, k), false); 
-					if (Physics.CheckBox (worldPoint, cube, transform.rotation, (1 << LayerMask.NameToLayer ("Dungeon")))) {
+					if (Physics.CheckBox (worldPoint, cube, transform.rotation, (1 << LayerMask.NameToLayer ("DungeonRadius")))) {
 						setArrayPosToFull (worldPoint);
 					}
 				}
