@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class DungeonGenerator : MonoBehaviour {
 
 	public World world; //links the world generator (grid for making halls)
+	public AStar2D aStar;
 	
     public GameObject player;
 
@@ -72,9 +74,10 @@ public class DungeonGenerator : MonoBehaviour {
         //create the first piece of hallway facing out of the room
         placeFirstHallwayPieces();
 
-        //create hallways between the rooms
-        //createHallways();
+        aStar.StartMe();
+		createHallways();
 	}
+	
 	
 	// Update is called once per frame
 	void Update () {
@@ -156,31 +159,12 @@ public class DungeonGenerator : MonoBehaviour {
         int yRotation = 0;
 
         foreach(GameObject door in doors){
-            string direction = getDoorDirection(door);
-
-            if(direction == "up")
-            {
-                 newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z + hallwayRadius);
-                 yRotation = 0;
-            }
-            else if(direction == "down")
-            {
-                newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z - hallwayRadius);
-                yRotation = 0;
-            }
-            else if(direction == "left")
-            {
-                newPos = new Vector3(door.transform.position.x - hallwayRadius, door.transform.position.y, door.transform.position.z);
-                yRotation = 90;
-            }
-            else if(direction == "right")
-            {
-                newPos = new Vector3(door.transform.position.x + hallwayRadius, door.transform.position.y, door.transform.position.z);
-                yRotation = 90;
-            }
-
-            GameObject newHallway = Instantiate(dungeonHallways[0], newPos, dungeonHallways[0].transform.rotation);
+            
+			newPos = getFirstDoorPiecePosition(door);
+            GameObject newHallway = Instantiate(dungeonHallways[3], newPos, dungeonHallways[3].transform.rotation);
             newHallway.transform.eulerAngles = new Vector3(newHallway.transform.eulerAngles.x, yRotation, newHallway.transform.eulerAngles.z);
+			
+			//world.setArrayPosToFull(newPos);
         }
     }
 
@@ -225,6 +209,37 @@ public class DungeonGenerator : MonoBehaviour {
 
         return null;
     }
+	
+	public Vector3 getFirstDoorPiecePosition(GameObject door){
+		
+		Vector3 newPos = Vector3.zero;
+		int yRotation = 0;
+		
+		string direction = getDoorDirection(door);
+
+		if(direction == "up")
+		{
+			 newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z + hallwayRadius);
+			 yRotation = 0;
+		}
+		else if(direction == "down")
+		{
+			newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z - hallwayRadius);
+			yRotation = 0;
+		}
+		else if(direction == "left")
+		{
+			newPos = new Vector3(door.transform.position.x - hallwayRadius, door.transform.position.y, door.transform.position.z);
+			yRotation = 90;
+		}
+		else if(direction == "right")
+		{
+			newPos = new Vector3(door.transform.position.x + hallwayRadius, door.transform.position.y, door.transform.position.z);
+			yRotation = 90;
+		}
+		
+		return newPos;
+	}
 
     /// <summary>
     /// Forces the piece to be created. Good for entrance and exit as they must exsist, also good for other rooms that
@@ -402,24 +417,67 @@ public class DungeonGenerator : MonoBehaviour {
         }
     }
 
+	
+	public List<node> path; ///< Holds a list of nodes in the generated path
+	
     public void createHallways()
     {
-        int Ax = 0;
-        int Az = 0;
+       // AStar2D aStar = new AStar2D();
+		
+       List<GameObject> tempDoors = new List<GameObject>();
+	   
+	   foreach (GameObject Obj in doors){
+		   tempDoors.Add(Obj);
+	   }
 
-        int Bx = 6;
-        int Bz = 6;
-
-        AStar2D aStar = new AStar2D();
-
-        List<node> path = new List<node>();
-
-        aStar.world = world;
-
-        aStar.cloneWorldArrayIntoLocal();
-
-        while (doors.Count > 0)
+        while (tempDoors.Count > 0)
         {
+			
+			path = new List<node>();
+
+			//quicker reset look to function for more details
+			aStar.quickLocalArrayReset();
+		
+			GameObject doorA = tempDoors[Random.Range(0, tempDoors.Count)];
+			tempDoors.Remove(doorA);
+			
+			
+			
+			GameObject doorB = null;
+			if (tempDoors.Count < 1){ //quite messy might change so the while runs while tempdoor count is greater than 2 then have a seperate if to handle the last doors	
+				
+				//method 1 - 	more chance of causing none linking sections of the dungeon
+				//				however, has less chance of creating competing paths
+				//doorB = getClosestDoor(doorA, doors);
+				
+				
+				
+				//method 2 - 	less chance of causing none linking sections of the dungeon
+				//				however, has more chance of creating competing paths
+				do{
+					doorB = doors[Random.Range(0, doors.Count)];
+				} while ((doorB.transform.parent != doorA.transform.parent) && (doorA != doorB));
+
+			} else {
+				Debug.Log("YO" + tempDoors.Count);
+				doorB = getClosestDoor(doorA, tempDoors);
+				if(doorB == null){
+					Debug.Log("running");
+					do{
+						doorB = doors[Random.Range(0, doors.Count)];
+					} while ((doorB.transform.parent != doorA.transform.parent) && (doorA != doorB));
+				}
+			}
+			//tempDoors.Remove(doorB);
+			
+			Vector3 doorAPos = getFirstDoorPiecePosition(doorA);
+			int Ax = (int)Mathf.Round(doorAPos.x);
+			int Az = (int)Mathf.Round(doorAPos.z);
+
+			Vector3 doorBPos = getFirstDoorPiecePosition(doorB);
+			int Bx = (int)Mathf.Round(doorBPos.x);
+			int Bz = (int)Mathf.Round(doorBPos.z);
+		
             Vector3 startPos = new Vector3(Ax, 0, Az);
             startPos = world.WorldToArrayPosition(startPos);
             startPos.y = 0;
@@ -432,24 +490,48 @@ public class DungeonGenerator : MonoBehaviour {
 
             path = aStar.findPath(start, goal);
 
-            foreach (node n in path)
-            {
-                if (n != null)
-                {
-                    Vector3 position = world.ArrayToWorldPosition(n.nodePos, false);
-                    position.y = 0;
-                    //piece must be in a good location, so place it:
-                    GameObject pieceToCreate = Instantiate(dungeonHallways[0], position, dungeonHallways[0].transform.rotation);
-                    pieceToCreate.transform.parent = transform;
+			if(path != null){
+				foreach (node n in path)
+				{
+					if (n != null)
+					{
+						Vector3 position = world.ArrayToWorldPosition(n.nodePos, false);
+						position.y = 0;
+						//piece must be in a good location, so place it:
+						GameObject pieceToCreate = Instantiate(dungeonHallways[3], position, dungeonHallways[3].transform.rotation);
+						pieceToCreate.transform.parent = transform;
 
-                    //pick a random rotation
-                    int yRotation = random90DegreeRotation();
-                    pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
-                }
-            }
+						//pick a random rotation
+						int yRotation = random90DegreeRotation();
+						pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+					}
+				}
+			}
+			//Destroy (doorA);
+			//Destroy (doorB);
         }
     }
 
+	//gets the closest door thats not on the same room to the door you pass in
+	public GameObject getClosestDoor(GameObject doorA, List<GameObject> doors){
+		float dist = float.MaxValue;
+		GameObject doorB = null;
+		
+		foreach(GameObject tempDoorB in doors){
+			if(tempDoorB != null){
+				float tempDist = Vector3.Distance(doorA.transform.position, tempDoorB.transform.position);
+				if(tempDist < dist){
+					if(tempDoorB.transform.parent != doorA.transform.parent){
+						dist = tempDist;
+						doorB = tempDoorB;
+					}
+				}
+			}
+		}
+		
+		return doorB;
+	}
+	
     public void createDungeonMethod0(){
         //create a 3D array of ints related to dungeon parts 
         for (int i = 0; i < floors; i++) //loop through number of floors

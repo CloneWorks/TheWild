@@ -113,7 +113,7 @@ public class AStar2D : MonoBehaviour {
 	/// Used for initialization. sets neighbours directions in neighbourPos list and makes a instance of the world array
 	/// Only adds directions of the neighbours on a single plane
 	/// </summary>
-	void Start () {
+	public void StartMe () {
 		cloneWorldArrayIntoLocal ();
 		//adding all posible directions to check for nodes in getNeighbours
 		//used for checking and adding all valid neighbours of a single node
