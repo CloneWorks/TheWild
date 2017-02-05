@@ -139,9 +139,11 @@ public class ThirdPersonOrbitCam : MonoBehaviour
 	bool ViewingPosCheck (Vector3 checkPos, float deltaPlayerHeight)
 	{
 		RaycastHit hit;
-		
+
+        LayerMask mask = 1 << 9; //ignore dungeon piece radius
+
 		// If a raycast from the check position to the player hits something...
-		if(Physics.Raycast(checkPos, player.position+(Vector3.up* deltaPlayerHeight) - checkPos, out hit, relCameraPosMag))
+		if(Physics.Raycast(checkPos, player.position+(Vector3.up* deltaPlayerHeight) - checkPos, out hit, relCameraPosMag, ~mask))
 		{
 			// ... if it is not the player...
 			if(hit.transform != player && !hit.transform.GetComponent<Collider>().isTrigger)
@@ -158,8 +160,9 @@ public class ThirdPersonOrbitCam : MonoBehaviour
 	bool ReverseViewingPosCheck(Vector3 checkPos, float deltaPlayerHeight)
 	{
 		RaycastHit hit;
+        LayerMask mask = 1 << 9; //ignore dungeon piece radius
 
-		if(Physics.Raycast(player.position+(Vector3.up* deltaPlayerHeight), checkPos - player.position, out hit, relCameraPosMag))
+		if(Physics.Raycast(player.position+(Vector3.up* deltaPlayerHeight), checkPos - player.position, out hit, relCameraPosMag, ~mask))
 		{
 			if(hit.transform != player && hit.transform != transform && !hit.transform.GetComponent<Collider>().isTrigger)
 			{

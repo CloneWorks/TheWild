@@ -48,7 +48,7 @@ public class DungeonGenerator : MonoBehaviour {
         numberOfDungeonParts = dungeonParts.Count;
 
         //get hallway data
-        hallwayRadius = (int)dungeonHallways[0].GetComponent<BoxCollider>().size.x/2;
+        hallwayRadius = (int)dungeonHallways[0].GetComponentInChildren<SphereCollider>().radius;
 
         //set grid size
         gridCellSize = hallwayRadius * 2;
@@ -122,16 +122,7 @@ public class DungeonGenerator : MonoBehaviour {
             roomPos = newPosition(worldArea);
 
             //create a room at that point if there are no collisions with it
-            float roomRadius;
-
-            if (dungeonRooms[roomPicked].GetComponent<BoxCollider>().size.x > dungeonRooms[roomPicked].GetComponent<BoxCollider>().size.y)
-            {
-                roomRadius = dungeonRooms[roomPicked].GetComponent<BoxCollider>().size.x / 2;
-            }
-            else
-            {
-                roomRadius = dungeonRooms[roomPicked].GetComponent<BoxCollider>().size.y / 2;
-            }
+            float roomRadius = dungeonRooms[roomPicked].GetComponentInChildren<SphereCollider>().radius;
 
             if (!isCollisionInRadius(roomPos, (int)roomRadius))
             {
@@ -245,7 +236,7 @@ public class DungeonGenerator : MonoBehaviour {
     public GameObject createDungeonPiece(GameObject dungeonPiece, Vector3 position)
     {
         
-        int pieceRadius = (int)dungeonPiece.GetComponent<BoxCollider>().size.x/2;
+        int pieceRadius = (int)dungeonPiece.GetComponentInChildren<SphereCollider>().radius;
         int newX;
         int newZ;
 
