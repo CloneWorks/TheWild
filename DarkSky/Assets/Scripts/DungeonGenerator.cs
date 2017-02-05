@@ -68,6 +68,12 @@ public class DungeonGenerator : MonoBehaviour {
 		world.gridCellSize = gridCellSize;
 
 		world.AwakeMe();
+
+        //create the first piece of hallway facing out of the room
+        placeFirstHallwayPieces();
+
+        //create hallways between the rooms
+        //createHallways();
 	}
 	
 	// Update is called once per frame
@@ -140,6 +146,82 @@ public class DungeonGenerator : MonoBehaviour {
             //tally attempt
             attempts++;
         }
+    }
+
+    public void placeFirstHallwayPieces()
+    {
+        Vector3 newPos = Vector3.zero;
+        int yRotation = 0;
+
+        foreach(GameObject door in doors){
+            string direction = getDoorDirection(door);
+
+            if(direction == "up")
+            {
+                 newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z + hallwayRadius);
+                 yRotation = 0;
+            }
+            else if(direction == "down")
+            {
+                newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z - hallwayRadius);
+                yRotation = 0;
+            }
+            else if(direction == "left")
+            {
+                newPos = new Vector3(door.transform.position.x - hallwayRadius, door.transform.position.y, door.transform.position.z);
+                yRotation = 90;
+            }
+            else if(direction == "right")
+            {
+                newPos = new Vector3(door.transform.position.x + hallwayRadius, door.transform.position.y, door.transform.position.z);
+                yRotation = 90;
+            }
+
+            GameObject newHallway = Instantiate(dungeonHallways[0], newPos, dungeonHallways[0].transform.rotation);
+            newHallway.transform.eulerAngles = new Vector3(newHallway.transform.eulerAngles.x, yRotation, newHallway.transform.eulerAngles.z);
+        }
+    }
+
+    /// <summary>
+    /// Gives a direction of the door from its room parent
+    /// </summary>
+    /// <param name="door"></param>
+    /// <returns></returns>
+    public string getDoorDirection(GameObject door)
+    {
+        Vector3 A = door.transform.position;
+        Vector3 B = door.transform.parent.transform.position;
+
+        Vector3 AB = (A - B).normalized;
+
+        Vector3 up = new Vector3(0, 0, 1);
+        Vector3 down = new Vector3(0, 0, -1);
+        Vector3 left = new Vector3(-1, 0, 0);
+        Vector3 right = new Vector3(1, 0, 0);
+
+        if(AB == up)
+        {
+            //Debug.Log("Door is facing up!");
+            return "up";
+        }
+
+        if(AB == down){
+            //Debug.Log("Door is facing down!");
+            return "down";
+        }
+
+        if(AB == left){
+            //Debug.Log("Door is facing left!");
+            return "left";
+        }
+
+        if (AB == right)
+        {
+            //Debug.Log("Door is facing right!");
+            return "right";
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -321,25 +403,27 @@ public class DungeonGenerator : MonoBehaviour {
     public void createHallways()
     {
         int Ax = 0;
-        int Ay = 0;
+        int Az = 0;
 
-        int Bx = 0;
-        int By = 0;
+        int Bx = 6;
+        int Bz = 6;
 
         AStar2D aStar = new AStar2D();
 
         List<node> path = new List<node>();
 
+        aStar.world = world;
+
         aStar.cloneWorldArrayIntoLocal();
 
         while (doors.Count > 0)
         {
-            Vector3 startPos = new Vector3(Ax, 0, Ay);
+            Vector3 startPos = new Vector3(Ax, 0, Az);
             startPos = world.WorldToArrayPosition(startPos);
             startPos.y = 0;
             node start = aStar.localWorldArray[(int)startPos.x, (int)startPos.y, (int)startPos.z];
 
-            Vector3 goalPos = new Vector3(Bx, 1, By);
+            Vector3 goalPos = new Vector3(Bx, 1, Bz);
             goalPos = world.WorldToArrayPosition(goalPos);
             goalPos.y = 0;
             node goal = aStar.localWorldArray[(int)goalPos.x, (int)goalPos.y, (int)goalPos.z];
@@ -363,6 +447,7 @@ public class DungeonGenerator : MonoBehaviour {
             }
         }
     }
+
     public void createDungeonMethod0(){
         //create a 3D array of ints related to dungeon parts 
         for (int i = 0; i < floors; i++) //loop through number of floors
