@@ -20,6 +20,8 @@ public class node {
 	public bool onClosedList = false; ///< Is on the list of nodes that have been checked
 	public bool onOpenList = false; ///< Is on the list of nodes that hasn't been checked
 
+    public bool isHallwayPiece = false; ///< Records that this spot directly relates to a hallway piece.
+
 	//public List<node> neighbors;
 
 	// Use this for initialization

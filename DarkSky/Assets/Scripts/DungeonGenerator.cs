@@ -165,6 +165,7 @@ public class DungeonGenerator : MonoBehaviour {
             newHallway.transform.eulerAngles = new Vector3(newHallway.transform.eulerAngles.x, yRotation, newHallway.transform.eulerAngles.z);
 			
 			//world.setArrayPosToFull(newPos);
+            world.setArrayPosAsHallway(newPos); //mark node as being a hallway piece
         }
     }
 
@@ -213,29 +214,29 @@ public class DungeonGenerator : MonoBehaviour {
 	public Vector3 getFirstDoorPiecePosition(GameObject door){
 		
 		Vector3 newPos = Vector3.zero;
-		int yRotation = 0;
+		//int yRotation = 0;
 		
 		string direction = getDoorDirection(door);
 
 		if(direction == "up")
 		{
 			 newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z + hallwayRadius);
-			 yRotation = 0;
+			 //yRotation = 0;
 		}
 		else if(direction == "down")
 		{
 			newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z - hallwayRadius);
-			yRotation = 0;
+			//yRotation = 0;
 		}
 		else if(direction == "left")
 		{
 			newPos = new Vector3(door.transform.position.x - hallwayRadius, door.transform.position.y, door.transform.position.z);
-			yRotation = 90;
+			//yRotation = 90;
 		}
 		else if(direction == "right")
 		{
 			newPos = new Vector3(door.transform.position.x + hallwayRadius, door.transform.position.y, door.transform.position.z);
-			yRotation = 90;
+			//yRotation = 90;
 		}
 		
 		return newPos;
@@ -497,7 +498,58 @@ public class DungeonGenerator : MonoBehaviour {
 					{
 						Vector3 position = world.ArrayToWorldPosition(n.nodePos, false);
 						position.y = 0;
+
+                        //mark as piece of hallway
+                        world.setArrayPosAsHallway(world.ArrayToWorldPosition(n.nodePos, false)); //sets a node as being part of a hallway
+
 						//piece must be in a good location, so place it:
+
+                        //set hallway surroundings bit integer:
+                        //check if hallway above
+                            //set fist bit = 1000 = above
+                        //check if hallway below
+                            //set second bit = 0100 = below
+                        //check if hallway left
+                            //set third bit = 0010 = left
+                        //check if hallway right
+                            //set fourth bit = 0001 = right
+
+                        //check what's around a choose a piece and rotation based on condition
+                        //01. if only above                     (1000)
+
+                        //02. if only below                     (0100)
+
+                        //03. if left                           (0010)
+
+                        //04. if right                          (0001)
+
+
+                        //05. if above and below                (1100)
+
+                        //06. if left and right                 (0011)
+
+                        //07. if below and right                (0101)
+
+                        //08. if below and left                 (0110)
+
+                        //09. if above and right                (1001)
+
+                        //10. if above and left                 (1010)
+
+
+                        //11. if below, left, and right         (0111)
+
+                        //12. if above, left, and right         (1011)
+
+                        //13. if above, left, and below         (1110)
+
+                        //14. if above, right, and below        (1101)
+
+
+                        //15. if all                            (1111)
+
+                        //16. if none                           (0000)
+
 						GameObject pieceToCreate = Instantiate(dungeonHallways[3], position, dungeonHallways[3].transform.rotation);
 						pieceToCreate.transform.parent = transform;
 

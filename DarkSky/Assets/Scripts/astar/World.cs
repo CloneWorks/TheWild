@@ -251,6 +251,12 @@ public class World : MonoBehaviour {
 		worldArray[(int)arrayPos.x, (int)arrayPos.y, (int)arrayPos.z].walkable = false;
 	}
 
+    public void setArrayPosAsHallway(Vector3 worldPos)
+    { //sets position in worldArray to true indicating it is now a hallway piece
+        Vector3 arrayPos = WorldToArrayPosition(worldPos);
+        worldArray[(int)arrayPos.x, (int)arrayPos.y, (int)arrayPos.z].isHallwayPiece = true;
+    }
+
     /// <summary>
     /// sets a position to full from the array index position
     /// </summary>
