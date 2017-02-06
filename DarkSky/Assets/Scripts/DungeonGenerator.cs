@@ -26,6 +26,8 @@ public class DungeonGenerator : MonoBehaviour {
     public List<GameObject> dungeonRooms;
     public List<GameObject> dungeonHallways;
 
+    public List<Vector3> hallwayLocations;
+
     public List<int> dungeonDoorways; //a list to hold the number of doors on a dungeon part
     public List<int> dungeonSpacingX; //a list that holds how far appart dungeons need to be to line up on the X
     public List<int> dungeonSpacingZ; //a list that holds how far appart dungeons need to be to line up on the Z
@@ -72,9 +74,14 @@ public class DungeonGenerator : MonoBehaviour {
 		world.AwakeMe();
 
         //create the first piece of hallway facing out of the room
-        placeFirstHallwayPieces();
+        //placeFirstHallwayPieces();
 
         aStar.StartMe();
+
+        markHallways();
+
+        addDoorwaysAsHallways();
+
 		createHallways();
 	}
 	
@@ -161,10 +168,13 @@ public class DungeonGenerator : MonoBehaviour {
         foreach(GameObject door in doors){
             
 			newPos = getFirstDoorPiecePosition(door);
-            GameObject newHallway = Instantiate(dungeonHallways[3], newPos, dungeonHallways[3].transform.rotation);
+
+            yRotation = getFirstDoorPieceRotation(door);
+
+            GameObject newHallway = Instantiate(dungeonHallways[0], newPos, dungeonHallways[0].transform.rotation);
             newHallway.transform.eulerAngles = new Vector3(newHallway.transform.eulerAngles.x, yRotation, newHallway.transform.eulerAngles.z);
 			
-			//world.setArrayPosToFull(newPos);
+			world.setArrayPosToFull(newPos); //set node as being full
             world.setArrayPosAsHallway(newPos); //mark node as being a hallway piece
         }
     }
@@ -211,36 +221,121 @@ public class DungeonGenerator : MonoBehaviour {
         return null;
     }
 	
+    public int getFirstDoorPieceRotation(GameObject door){
+        int yRotation = 0;
+
+        string direction = getDoorDirection(door);
+
+        if (direction == "up")
+        {
+            yRotation = 0;
+        }
+        else if (direction == "down")
+        {
+            yRotation = 0;
+        }
+        else if (direction == "left")
+        {
+            yRotation = 90;
+        }
+        else if (direction == "right")
+        {
+            yRotation = 90;
+        }
+
+        return yRotation;
+    }
+
 	public Vector3 getFirstDoorPiecePosition(GameObject door){
 		
 		Vector3 newPos = Vector3.zero;
-		//int yRotation = 0;
 		
 		string direction = getDoorDirection(door);
 
 		if(direction == "up")
 		{
 			 newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z + hallwayRadius);
-			 //yRotation = 0;
 		}
 		else if(direction == "down")
 		{
 			newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z - hallwayRadius);
-			//yRotation = 0;
 		}
 		else if(direction == "left")
 		{
 			newPos = new Vector3(door.transform.position.x - hallwayRadius, door.transform.position.y, door.transform.position.z);
-			//yRotation = 90;
 		}
 		else if(direction == "right")
 		{
 			newPos = new Vector3(door.transform.position.x + hallwayRadius, door.transform.position.y, door.transform.position.z);
-			//yRotation = 90;
 		}
 		
 		return newPos;
 	}
+
+    public void addDoorwaysAsHallways()
+    {
+        foreach(GameObject door in doors)
+        {
+            //get the position which needs to be marked as part of the hallway
+            Vector3 pos = getDoorAsHallwayPosition(door);
+
+            //mark as hallway
+            world.setArrayPosAsHallway(pos);
+        }
+    }
+
+    public Vector3 getDoorAsHallwayPosition(GameObject door)
+    {
+        Vector3 newPos = Vector3.zero;
+
+        string direction = getDoorDirection(door);
+
+        if (direction == "up")
+        {
+            newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z - hallwayRadius);
+        }
+        else if (direction == "down")
+        {
+            newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z + hallwayRadius);
+        }
+        else if (direction == "left")
+        {
+            newPos = new Vector3(door.transform.position.x + hallwayRadius, door.transform.position.y, door.transform.position.z);
+        }
+        else if (direction == "right")
+        {
+            newPos = new Vector3(door.transform.position.x - hallwayRadius, door.transform.position.y, door.transform.position.z);
+        }
+
+        return newPos;
+    }
+
+    public Vector3 getFirstHallwayPiecePosition(GameObject door)
+    {
+
+        Vector3 newPos = Vector3.zero;
+
+        string direction = getDoorDirection(door);
+
+        if (direction == "up")
+        {
+            newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z + hallwayRadius + hallwayRadius*2);
+        }
+        else if (direction == "down")
+        {
+            newPos = new Vector3(door.transform.position.x, door.transform.position.y, door.transform.position.z - hallwayRadius - hallwayRadius * 2);
+        }
+        else if (direction == "left")
+        {
+            newPos = new Vector3(door.transform.position.x - hallwayRadius - hallwayRadius * 2, door.transform.position.y, door.transform.position.z);
+        }
+        else if (direction == "right")
+        {
+            newPos = new Vector3(door.transform.position.x + hallwayRadius + hallwayRadius * 2, door.transform.position.y, door.transform.position.z);
+        }
+
+        return newPos;
+    }
 
     /// <summary>
     /// Forces the piece to be created. Good for entrance and exit as they must exsist, also good for other rooms that
@@ -421,7 +516,7 @@ public class DungeonGenerator : MonoBehaviour {
 	
 	public List<node> path; ///< Holds a list of nodes in the generated path
 	
-    public void createHallways()
+    public void markHallways()
     {
        // AStar2D aStar = new AStar2D();
 		
@@ -460,22 +555,22 @@ public class DungeonGenerator : MonoBehaviour {
 				} while ((doorB.transform.parent != doorA.transform.parent) && (doorA != doorB));
 
 			} else {
-				Debug.Log("YO" + tempDoors.Count);
+				//Debug.Log("YO" + tempDoors.Count);
 				doorB = getClosestDoor(doorA, tempDoors);
 				if(doorB == null){
-					Debug.Log("running");
+					//Debug.Log("running");
 					do{
 						doorB = doors[Random.Range(0, doors.Count)];
 					} while ((doorB.transform.parent != doorA.transform.parent) && (doorA != doorB));
 				}
 			}
 			//tempDoors.Remove(doorB);
-			
-			Vector3 doorAPos = getFirstDoorPiecePosition(doorA);
+
+            Vector3 doorAPos = getFirstDoorPiecePosition(doorA); //if we want all the first pieces facing out of the room use: getFirstHallwayPiecePosition(doorA);
 			int Ax = (int)Mathf.Round(doorAPos.x);
 			int Az = (int)Mathf.Round(doorAPos.z);
 
-			Vector3 doorBPos = getFirstDoorPiecePosition(doorB);
+            Vector3 doorBPos = getFirstDoorPiecePosition(doorB); //if we want all the first pieces facing out of the room use: getFirstHallwayPiecePosition(doorB);
 			int Bx = (int)Mathf.Round(doorBPos.x);
 			int Bz = (int)Mathf.Round(doorBPos.z);
 		
@@ -502,66 +597,264 @@ public class DungeonGenerator : MonoBehaviour {
                         //mark as piece of hallway
                         world.setArrayPosAsHallway(world.ArrayToWorldPosition(n.nodePos, false)); //sets a node as being part of a hallway
 
-						//piece must be in a good location, so place it:
-
-                        //set hallway surroundings bit integer:
-                        //check if hallway above
-                            //set fist bit = 1000 = above
-                        //check if hallway below
-                            //set second bit = 0100 = below
-                        //check if hallway left
-                            //set third bit = 0010 = left
-                        //check if hallway right
-                            //set fourth bit = 0001 = right
-
-                        //check what's around a choose a piece and rotation based on condition
-                        //01. if only above                     (1000)
-
-                        //02. if only below                     (0100)
-
-                        //03. if left                           (0010)
-
-                        //04. if right                          (0001)
-
-
-                        //05. if above and below                (1100)
-
-                        //06. if left and right                 (0011)
-
-                        //07. if below and right                (0101)
-
-                        //08. if below and left                 (0110)
-
-                        //09. if above and right                (1001)
-
-                        //10. if above and left                 (1010)
-
-
-                        //11. if below, left, and right         (0111)
-
-                        //12. if above, left, and right         (1011)
-
-                        //13. if above, left, and below         (1110)
-
-                        //14. if above, right, and below        (1101)
-
-
-                        //15. if all                            (1111)
-
-                        //16. if none                           (0000)
-
-						GameObject pieceToCreate = Instantiate(dungeonHallways[3], position, dungeonHallways[3].transform.rotation);
-						pieceToCreate.transform.parent = transform;
-
-						//pick a random rotation
-						int yRotation = random90DegreeRotation();
-						pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+						//piece must be in a good location, so store it:
+                        hallwayLocations.Add(position);
 					}
 				}
 			}
 			//Destroy (doorA);
 			//Destroy (doorB);
         }
+    }
+
+    public void createHallways()
+    {
+        //hold the new game object
+        GameObject pieceToCreate;
+
+        //basic bytes       (4 variations)
+        byte up = 8;
+        byte down = 4;
+        byte left = 2;
+        byte right = 1;
+
+        //two directions    (6 variations)
+        byte upDown = 12;
+        byte upLeft = 10;
+        byte upRight = 9;
+        byte downLeft = 6;
+        byte downRight = 5;
+        byte leftRight = 3;
+
+
+        //three directions  (4 variations)
+        byte upLeftRight = 11;
+        byte downLeftRight = 7;
+        byte upRightDown = 13;
+        byte upLeftDown = 14;
+
+        //four directions   (1 variation)
+        byte fourWay = 15;
+
+        //none              (1 variation)
+        byte none = 0;
+
+        //holds the byte value of the sections around
+        byte hallwaysAroundMe = 0;
+
+        foreach (Vector3 position in hallwayLocations)
+        {
+            //set hallway surroundings bit integer:
+            //check if hallway above
+            if (world.checkHallwayPiece(new Vector3(position.x, position.y, position.z + gridCellSize)))
+            {
+                //set fist bit = 1000 = above
+                hallwaysAroundMe += up;
+            }
+            
+            //check if hallway below
+            if (world.checkHallwayPiece(new Vector3(position.x, position.y, position.z - gridCellSize)))
+            {
+                //set second bit = 0100 = below
+                hallwaysAroundMe += down;
+            }
+
+            
+            //check if hallway left
+            if (world.checkHallwayPiece(new Vector3(position.x - gridCellSize, position.y, position.z)))
+            {
+                //set third bit = 0010 = left
+                hallwaysAroundMe += left;
+            }
+            
+            //check if hallway right
+            if (world.checkHallwayPiece(new Vector3(position.x + gridCellSize, position.y, position.z)))
+            {
+                //set fourth bit = 0001 = right
+                hallwaysAroundMe += right;
+            }
+
+            //check what's around and choose a piece and rotation based on condition
+            //one direction
+            if (hallwaysAroundMe == up) 
+            {
+                //make straight
+                pieceToCreate = Instantiate(dungeonHallways[0], position, dungeonHallways[0].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 0;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            if (hallwaysAroundMe == down) 
+            {
+                //make straight
+                pieceToCreate = Instantiate(dungeonHallways[0], position, dungeonHallways[0].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 0;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            if (hallwaysAroundMe == left) 
+            {
+                //make straight
+                pieceToCreate = Instantiate(dungeonHallways[0], position, dungeonHallways[0].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 90;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            if (hallwaysAroundMe == right) 
+            {
+                //make straight
+                pieceToCreate = Instantiate(dungeonHallways[0], position, dungeonHallways[0].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 90;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            //twoDirections
+            if(hallwaysAroundMe == upDown)
+            {
+                //make straight
+                pieceToCreate = Instantiate(dungeonHallways[0], position, dungeonHallways[0].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 0;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            if(hallwaysAroundMe == upLeft)
+            {
+                //make corner
+                pieceToCreate = Instantiate(dungeonHallways[1], position, dungeonHallways[1].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 270;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            if(hallwaysAroundMe == upRight)
+            {
+                //make corner
+                pieceToCreate = Instantiate(dungeonHallways[1], position, dungeonHallways[1].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 0;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            if(hallwaysAroundMe == downLeft)
+            {
+                //make corner
+                pieceToCreate = Instantiate(dungeonHallways[1], position, dungeonHallways[1].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 180;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            if(hallwaysAroundMe == downRight)
+            {
+                //make corner
+                pieceToCreate = Instantiate(dungeonHallways[1], position, dungeonHallways[1].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 90;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            if(hallwaysAroundMe == leftRight)
+            {
+                //make straight
+                pieceToCreate = Instantiate(dungeonHallways[0], position, dungeonHallways[0].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 90;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            //three directions
+            if(hallwaysAroundMe == upLeftRight)
+            {
+                //make T-Section
+                pieceToCreate = Instantiate(dungeonHallways[2], position, dungeonHallways[2].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 0;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            if(hallwaysAroundMe == downLeftRight)
+            {
+                //make T-Section
+                pieceToCreate = Instantiate(dungeonHallways[2], position, dungeonHallways[2].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 180;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            if(hallwaysAroundMe == upRightDown)
+            {
+                //make T-Section
+                pieceToCreate = Instantiate(dungeonHallways[2], position, dungeonHallways[2].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 90;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            if(hallwaysAroundMe == upLeftDown)
+            {
+                //make T-Section
+                pieceToCreate = Instantiate(dungeonHallways[2], position, dungeonHallways[2].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+
+                //pick a rotation
+                int yRotation = 270;
+                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+            }
+
+            //four directions
+            if (hallwaysAroundMe == fourWay)
+            {
+                //make floor
+                pieceToCreate = Instantiate(dungeonHallways[3], position, dungeonHallways[3].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+            }
+
+            //nothing around
+            if (hallwaysAroundMe == none)
+            {
+                //make floor
+                pieceToCreate = Instantiate(dungeonHallways[3], position, dungeonHallways[3].transform.rotation);
+                pieceToCreate.transform.parent = transform;
+            }
+
+            //reset hallways around me
+            hallwaysAroundMe = 0;
+
+
+            
+        }
+        
     }
 
 	//gets the closest door thats not on the same room to the door you pass in

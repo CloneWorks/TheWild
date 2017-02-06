@@ -255,6 +255,21 @@ public class World : MonoBehaviour {
     { //sets position in worldArray to true indicating it is now a hallway piece
         Vector3 arrayPos = WorldToArrayPosition(worldPos);
         worldArray[(int)arrayPos.x, (int)arrayPos.y, (int)arrayPos.z].isHallwayPiece = true;
+        
+    }
+
+    public bool checkHallwayPiece(Vector3 worldPos)
+    {
+        Vector3 arrayPos = WorldToArrayPosition(worldPos);
+
+        if(worldArray[(int)arrayPos.x, (int)arrayPos.y, (int)arrayPos.z].isHallwayPiece == true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /// <summary>
