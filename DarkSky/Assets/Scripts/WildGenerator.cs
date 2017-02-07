@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq; // used for Sum of array
 
 public class WildGenerator : MonoBehaviour {
 
@@ -31,11 +32,17 @@ public class WildGenerator : MonoBehaviour {
 
     public float spawnRadiusOfPlayer = 5f; //how far an object must be to be created near the player
 
+    public float waterLevel = 1.0f; //how hight the water level sits
+
+    public float raiseTerrain = 0.1f; //a fixed amount to add to terrain height
+
     [Header("Town Data")]
     public float spawnRadiusOfTowns = 5f; //how far an object must be to be created near a town
     public List<GameObject> towns = new List<GameObject>();
 
     [Header("Terrain Data")]
+    public Terrain islandMask; //holds data which will make generation into an island
+
     public Vector3 terrainSize; //holds the size of the terrain
 
     public Vector3 terrainPosition; //holds the position of the terrain
@@ -191,7 +198,7 @@ public class WildGenerator : MonoBehaviour {
                     Vector3 objPos = new Vector3(x + terrainPosition.x + xJit, terrain.SampleHeight(new Vector3(x + terrainPosition.x + xJit, 0, z + terrainPosition.z + zJit)), z + terrainPosition.z + zJit);
 
                     //check if object is too close to the player or a town
-                    if(Vector3.Distance(player.transform.position, objPos) >= spawnRadiusOfPlayer && !NearATown(objPos))
+                    if(Vector3.Distance(player.transform.position, objPos) >= spawnRadiusOfPlayer && !NearATown(objPos) && objPos.y > waterLevel)
                     {
                         //create object
                         GameObject newObj = Instantiate(objects[randObj], objPos, Quaternion.identity);
@@ -259,6 +266,9 @@ public class WildGenerator : MonoBehaviour {
         //The higher the numbers, the more hills/mountains there are
         float tileSize = Random.Range(0, 10);
 
+        //grab island shape data
+        float[,] islandData = islandMask.terrainData.GetHeights(0,0, terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight);
+
         //Heights For Our Hills/Mountains
         float[,] hts = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
         for (int i = 0; i < terrain.terrainData.heightmapWidth; i++)
@@ -266,10 +276,108 @@ public class WildGenerator : MonoBehaviour {
             for (int k = 0; k < terrain.terrainData.heightmapHeight; k++)
             {
                 hts[i, k] = Mathf.PerlinNoise(((float)i / (float)terrain.terrainData.heightmapWidth) * tileSize, ((float)k / (float)terrain.terrainData.heightmapHeight) * tileSize) / divRange;
+
+                //make island shape by multiplying by island mask terrain data
+                hts[i, k] = (hts[i, k] + raiseTerrain) * islandData[i, k];
             }
         }
 
         terrain.terrainData.SetHeights(0, 0, hts);
+
+        //texture terrain
+        textureTerrain();
+    }
+
+    void textureTerrain()
+    {
+        TerrainData terrainData = terrain.terrainData;
+
+        // Splatmap data is stored internally as a 3d array of floats, so declare a new empty array ready for your custom splatmap data:
+        float[, ,] splatmapData = new float[terrainData.alphamapWidth, terrainData.alphamapHeight, terrainData.alphamapLayers];
+         
+        for (int y = 0; y < terrainData.alphamapHeight; y++)
+        {
+            for (int x = 0; x < terrainData.alphamapWidth; x++)
+            {
+                // Normalise x/y coordinates to range 0-1 
+                float y_01 = (float)y/(float)terrainData.alphamapHeight;
+                float x_01 = (float)x/(float)terrainData.alphamapWidth;
+                 
+                // Sample the height at this location (note GetHeight expects int coordinates corresponding to locations in the heightmap array)
+                float height = terrainData.GetHeight(Mathf.RoundToInt(y_01 * terrainData.heightmapHeight),Mathf.RoundToInt(x_01 * terrainData.heightmapWidth) );
+
+                // Calculate the normal of the terrain (note this is in normalised coordinates relative to the overall terrain dimensions)
+                Vector3 normal = terrainData.GetInterpolatedNormal(y_01,x_01);
+      
+                // Calculate the steepness of the terrain
+                float steepness = terrainData.GetSteepness(y_01,x_01);
+                 
+                // Setup an array to record the mix of texture weights at this point
+                float[] splatWeights = new float[terrainData.alphamapLayers];
+                 
+                // CHANGE THE RULES BELOW TO SET THE WEIGHTS OF EACH TEXTURE ON WHATEVER RULES YOU WANT
+     
+                // Texture[0] has constant influence
+                splatWeights[0] = 0f;
+
+                if(height > 20)
+                {
+                    splatWeights[0] = 10f;
+                }
+
+                // Texture[1] is stronger at lower altitudes
+                splatWeights[1] = 0; //Mathf.Clamp01((terrainData.heightmapHeight - height));
+
+                if (height <= 20)
+                {
+                    splatWeights[1] = 100.0f;
+                }
+
+                // Texture[2] stronger on flatter terrain
+                // Note "steepness" is unbounded, so we "normalise" it by dividing by the extent of heightmap height and scale factor
+                // Subtract result from 1.0 to give greater weighting to flat surfaces
+                splatWeights[2] = 0;
+
+                //splatWeights[2] = 1.0f - Mathf.Clamp01(steepness*steepness/(terrainData.heightmapHeight/5.0f));
+                 
+                // Texture[3] increases with height but only on surfaces facing positive Z axis 
+                splatWeights[3] = Mathf.Clamp01(steepness) * 5; //height * (Mathf.Clamp01(normal.z) + Mathf.Clamp01(normal.x) + Mathf.Clamp01(normal.y));  //height * Mathf.Clamp01(normal.z);
+                 
+                // Sum of all textures weights must add to 1, so calculate normalization factor from sum of weights
+                float z = splatWeights.Sum();
+                 
+                // Loop through each terrain texture
+                for(int i = 0; i<terrainData.alphamapLayers; i++)
+                {
+                     
+                    // Normalize so that sum of all texture weights = 1
+                    splatWeights[i] /= z;
+                     
+                    // Assign this point to the splatmap array
+                    splatmapData[x, y, i] = splatWeights[i];
+                }
+            }
+        }
+      
+        // Finally assign the new splatmap to the terrainData:
+        terrainData.SetAlphamaps(0, 0, splatmapData);
+    }
+
+    float convertWorldHeightToHeightmapHeight(float y)
+    {
+        //conver height into terrain height
+        TerrainData terrData = Terrain.activeTerrain.terrainData;
+        int terrRes = terrData.heightmapResolution;
+        Vector3 terrSize = terrData.size;
+        float ratioY = (terrSize.y) / terrRes;
+
+        //store height in scale with terrain resolution
+        float PosY = y / terrRes;
+
+        //get terrain height based on location scaling in the y ratio
+        float terrainPointY = (PosY / ratioY);
+
+        return terrainPointY;
     }
 
     //raises player to the height of the terrain at their position
