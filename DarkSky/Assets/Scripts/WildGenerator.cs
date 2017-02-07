@@ -150,6 +150,9 @@ public class WildGenerator : MonoBehaviour {
         //place water
         water.transform.position = new Vector3(water.transform.position.x, waterLevel, water.transform.position.z);
 
+        //texture terrain
+        textureTerrain();
+
         //re-populate objects
         for (int i = 0; i < gm.wildObjects.Count; i++)
         {
@@ -184,6 +187,9 @@ public class WildGenerator : MonoBehaviour {
 
         //place water
         water.transform.position = new Vector3(water.transform.position.x, waterLevel, water.transform.position.z);
+
+        //texture terrain
+        textureTerrain();
 
         //loop through x of terrain
         for (float x = 0; x < terrainSize.x; x+= xIncrement)
@@ -293,9 +299,6 @@ public class WildGenerator : MonoBehaviour {
         }
 
         terrain.terrainData.SetHeights(0, 0, hts);
-
-        //texture terrain
-        textureTerrain();
     }
 
     void textureTerrain()
@@ -328,19 +331,34 @@ public class WildGenerator : MonoBehaviour {
                 // CHANGE THE RULES BELOW TO SET THE WEIGHTS OF EACH TEXTURE ON WHATEVER RULES YOU WANT
      
                 // Texture[0] has constant influence
-                splatWeights[0] = 0f;
+                splatWeights[0] = 1f;
 
-                if(height > sandLevel)
-                {
-                    splatWeights[0] = 10f;
-                }
+                //if(height > sandLevel)
+                //{
+                //    splatWeights[0] = 1f;
+                //}
 
                 // Texture[1] is stronger at lower altitudes
                 splatWeights[1] = 0; //Mathf.Clamp01((terrainData.heightmapHeight - height));
 
-                if (height <= 20)
+                //if (y < terrainData.alphamapHeight / 5 || x < terrainData.alphamapWidth/5)
+                //{
+                //    splatWeights[1] = 1.0f;
+                //}
+
+                //if(steepness < 5)
+                //{
+                //    splatWeights[1] = 0.8f;
+                //}
+
+                //if (height <= sandLevel)
+                //{
+                //    splatWeights[1] = 1 + 1.0f * Mathf.Clamp01(steepness);
+                //}
+
+                if (height <= sandLevel + 2)
                 {
-                    splatWeights[1] = 100.0f;
+                    splatWeights[1] = 1.0f * ((sandLevel + 2) - height);
                 }
 
                 // Texture[2] stronger on flatter terrain
@@ -351,8 +369,12 @@ public class WildGenerator : MonoBehaviour {
                 //splatWeights[2] = 1.0f - Mathf.Clamp01(steepness*steepness/(terrainData.heightmapHeight/5.0f));
                  
                 // Texture[3] increases with height but only on surfaces facing positive Z axis 
-                splatWeights[3] = Mathf.Clamp01(steepness) * 5; //height * (Mathf.Clamp01(normal.z) + Mathf.Clamp01(normal.x) + Mathf.Clamp01(normal.y));  //height * Mathf.Clamp01(normal.z);
-                 
+                splatWeights[3] = 0;//Mathf.Clamp01(steepness) * 10; //height * (Mathf.Clamp01(normal.z) + Mathf.Clamp01(normal.x) + Mathf.Clamp01(normal.y));  //height * Mathf.Clamp01(normal.z);
+                
+                if(steepness > 24 && height > sandLevel)
+                {
+                    splatWeights[3] = 1.0f * (steepness) - 24;
+                }
                 // Sum of all textures weights must add to 1, so calculate normalization factor from sum of weights
                 float z = splatWeights.Sum();
                  
