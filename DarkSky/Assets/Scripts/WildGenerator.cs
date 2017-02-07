@@ -34,6 +34,10 @@ public class WildGenerator : MonoBehaviour {
 
     public float waterLevel = 1.0f; //how hight the water level sits
 
+    public float sandLevel; //the height of the sand, usually a little above the water
+
+    public GameObject water; //holds the water
+
     public float raiseTerrain = 0.1f; //a fixed amount to add to terrain height
 
     [Header("Town Data")]
@@ -290,6 +294,9 @@ public class WildGenerator : MonoBehaviour {
 
     void textureTerrain()
     {
+        //place water
+        water.transform.position = new Vector3(water.transform.position.x, waterLevel, water.transform.position.z);
+
         TerrainData terrainData = terrain.terrainData;
 
         // Splatmap data is stored internally as a 3d array of floats, so declare a new empty array ready for your custom splatmap data:
@@ -320,7 +327,7 @@ public class WildGenerator : MonoBehaviour {
                 // Texture[0] has constant influence
                 splatWeights[0] = 0f;
 
-                if(height > 20)
+                if(height > sandLevel)
                 {
                     splatWeights[0] = 10f;
                 }
@@ -383,8 +390,13 @@ public class WildGenerator : MonoBehaviour {
     //raises player to the height of the terrain at their position
     void placePlayerOnTerrain()
     {
-        player.transform.position = new Vector3(player.transform.position.x, terrain.SampleHeight(new Vector3(player.transform.position.x, 0, player.transform.position.z)), player.transform.position.z);
-        flattern(player.transform.position, 1);
+        float terrainHeight = terrain.SampleHeight(new Vector3(player.transform.position.x, 0, player.transform.position.z));
+
+        if(player.transform.position.y < terrainHeight){
+            player.transform.position = new Vector3(player.transform.position.x, terrainHeight , player.transform.position.z);
+            flattern(player.transform.position, 1);
+        }
+        
     }
 
     //raises all towns to the terrain height at their position
