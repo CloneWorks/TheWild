@@ -147,6 +147,9 @@ public class WildGenerator : MonoBehaviour {
         //place player
         placePlayerOnTerrain();
 
+        //place water
+        water.transform.position = new Vector3(water.transform.position.x, waterLevel, water.transform.position.z);
+
         //re-populate objects
         for (int i = 0; i < gm.wildObjects.Count; i++)
         {
@@ -179,6 +182,9 @@ public class WildGenerator : MonoBehaviour {
         //place player
         placePlayerOnTerrain();
 
+        //place water
+        water.transform.position = new Vector3(water.transform.position.x, waterLevel, water.transform.position.z);
+
         //loop through x of terrain
         for (float x = 0; x < terrainSize.x; x+= xIncrement)
         {
@@ -202,7 +208,7 @@ public class WildGenerator : MonoBehaviour {
                     Vector3 objPos = new Vector3(x + terrainPosition.x + xJit, terrain.SampleHeight(new Vector3(x + terrainPosition.x + xJit, 0, z + terrainPosition.z + zJit)), z + terrainPosition.z + zJit);
 
                     //check if object is too close to the player or a town
-                    if(Vector3.Distance(player.transform.position, objPos) >= spawnRadiusOfPlayer && !NearATown(objPos) && objPos.y > waterLevel)
+                    if(Vector3.Distance(player.transform.position, objPos) >= spawnRadiusOfPlayer && !NearATown(objPos) && objPos.y > sandLevel)
                     {
                         //create object
                         GameObject newObj = Instantiate(objects[randObj], objPos, Quaternion.identity);
@@ -294,9 +300,6 @@ public class WildGenerator : MonoBehaviour {
 
     void textureTerrain()
     {
-        //place water
-        water.transform.position = new Vector3(water.transform.position.x, waterLevel, water.transform.position.z);
-
         TerrainData terrainData = terrain.terrainData;
 
         // Splatmap data is stored internally as a 3d array of floats, so declare a new empty array ready for your custom splatmap data:
