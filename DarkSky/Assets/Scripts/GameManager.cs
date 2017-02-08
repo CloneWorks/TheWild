@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour {
 
     public bool wildReset = false; //ensures a world update only happens once per new day
 
+    public Vector3 playerPos = Vector3.zero; //store players previous position
+
     void Awake()
     {
         //Check if instance already exists

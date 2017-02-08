@@ -461,6 +461,12 @@ public class WildGenerator : MonoBehaviour {
     //raises player to the height of the terrain at their position
     void placePlayerOnTerrain()
     {
+        //if the player has a saved position in the wild load it
+        if(gm.playerPos != Vector3.zero)
+        {
+            player.transform.position = gm.playerPos;
+        }
+
         float terrainHeight = terrain.SampleHeight(new Vector3(player.transform.position.x, 0, player.transform.position.z));
 
         if(player.transform.position.y < terrainHeight){
