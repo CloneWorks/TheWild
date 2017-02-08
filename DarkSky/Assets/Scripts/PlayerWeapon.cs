@@ -103,7 +103,9 @@ public class PlayerWeapon : MonoBehaviour {
         //only use this if weapons root is the holding position
         weapon.transform.position = rightHand.transform.position;
 
+        //add offset of weapon rotation
         //weapon.transform.rotation = rightHand.transform.rotation;
+        //weapon.transform.eulerAngles = new Vector3(weapon.transform.eulerAngles.x - 90, weapon.transform.eulerAngles.y, weapon.transform.eulerAngles.z);
 
         //get hand positions from weapon prefab
         if (weapon.transform.childCount == 1)
