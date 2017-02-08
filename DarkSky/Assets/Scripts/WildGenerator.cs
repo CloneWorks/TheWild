@@ -319,6 +319,8 @@ public class WildGenerator : MonoBehaviour {
     {
         TerrainData terrainData = terrain.terrainData;
 
+        float[, ,] originalSplatData = terrainData.GetAlphamaps(0, 0, terrainData.alphamapWidth, terrainData.alphamapHeight);
+
         // Splatmap data is stored internally as a 3d array of floats, so declare a new empty array ready for your custom splatmap data:
         float[, ,] splatmapData = new float[terrainData.alphamapWidth, terrainData.alphamapHeight, terrainData.alphamapLayers];
          
@@ -334,7 +336,7 @@ public class WildGenerator : MonoBehaviour {
                 float height = terrainData.GetHeight(Mathf.RoundToInt(y_01 * terrainData.heightmapHeight),Mathf.RoundToInt(x_01 * terrainData.heightmapWidth) );
 
                 //get a more detailed height using a ray cast -----------------------------------------------------------------------------------------------------------> My RAY
-                Vector3 start = new Vector3(y + terrain.transform.position.x, 1000, x + terrain.transform.position.z);
+                Vector3 start = new Vector3(y + terrain.transform.position.x - terrainData.alphamapLayers, 1000, x + terrain.transform.position.z - terrainData.alphamapLayers);
 
                 RaycastHit rcHit = new RaycastHit();
                 LayerMask mask = 1 << 10;
@@ -411,10 +413,13 @@ public class WildGenerator : MonoBehaviour {
                 //    splatWeights[3] = 1.0f * (steepness) - 24;
                 //}
 
-                if (steepness > 24 && height2 > sandLevel)
+                if (steepness > 24 && height2 >= sandLevel)
                 {
                     splatWeights[3] = 1.0f * (steepness) - 24;
                 }
+
+                //load stones from original terrain
+                splatWeights[4] = originalSplatData[x, y, 4] * 10.0f;
 
                 // Sum of all textures weights must add to 1, so calculate normalization factor from sum of weights
                 float z = splatWeights.Sum();
