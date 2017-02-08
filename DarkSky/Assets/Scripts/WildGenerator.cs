@@ -52,7 +52,7 @@ public class WildGenerator : MonoBehaviour {
     public Vector3 terrainPosition; //holds the position of the terrain
 
     //private variables
-    private List<GameObject> theWild = new List<GameObject>(); //a list of all the objects that exsist currently in the wild
+    public List<GameObject> theWild = new List<GameObject>(); //a list of all the objects that exsist currently in the wild
 
     //saved data about wild objects
     private List<int> theWildObjectSaves = new List<int>(); //Holds numbers representing each object in the wild
@@ -118,6 +118,11 @@ public class WildGenerator : MonoBehaviour {
 		
 	}
 
+    void FixedUpdate()
+    {
+        //rotateWildObjectsOnTerrain();
+    }
+
     void createWorld()
     {
         //check if there is a save
@@ -166,7 +171,12 @@ public class WildGenerator : MonoBehaviour {
             newObj.transform.eulerAngles = new Vector3(newObj.transform.eulerAngles.x, gm.wildRotations[i], newObj.transform.eulerAngles.z);
 
             theWild.Add(newObj);
+
+            newObj.transform.parent = transform;
         }
+
+        //rotate each object
+        rotateWildObjectsOnTerrain();
     }
 
     public void generateWild()
@@ -233,6 +243,8 @@ public class WildGenerator : MonoBehaviour {
                         //add to objects in the wild list
                         theWild.Add(newObj);
 
+                        newObj.transform.parent = transform;
+
                         //save data
                         theWildObjectSaves.Add(randObj);
                         theWildLoactionSaves.Add(newObj.transform.position);
@@ -240,10 +252,12 @@ public class WildGenerator : MonoBehaviour {
                         theWildRotationSaves.Add(yRotation);
 
                     }
-                }
-                      
-            }
+                }         
+            }  
         }
+
+        //rotate each object
+        rotateWildObjectsOnTerrain();
 
         //ensure lists are clear for new data
         //clearWild();
@@ -319,6 +333,22 @@ public class WildGenerator : MonoBehaviour {
                 // Sample the height at this location (note GetHeight expects int coordinates corresponding to locations in the heightmap array)
                 float height = terrainData.GetHeight(Mathf.RoundToInt(y_01 * terrainData.heightmapHeight),Mathf.RoundToInt(x_01 * terrainData.heightmapWidth) );
 
+                //get a more detailed height using a ray cast -----------------------------------------------------------------------------------------------------------> My RAY
+                Vector3 start = new Vector3(y + terrain.transform.position.x, 1000, x + terrain.transform.position.z);
+
+                RaycastHit rcHit = new RaycastHit();
+                LayerMask mask = 1 << 10;
+
+                Ray ray = new Ray(start, Vector3.down);
+
+                float height2 = 0;
+
+                if (Physics.Raycast(ray, out rcHit, 2000, mask))
+                {
+                    height2 = rcHit.point.y;
+                }
+                //-------------------------------------------------------------------------------------------------------------------------------------------------------> End of My Ray
+
                 // Calculate the normal of the terrain (note this is in normalised coordinates relative to the overall terrain dimensions)
                 Vector3 normal = terrainData.GetInterpolatedNormal(y_01,x_01);
       
@@ -356,9 +386,14 @@ public class WildGenerator : MonoBehaviour {
                 //    splatWeights[1] = 1 + 1.0f * Mathf.Clamp01(steepness);
                 //}
 
-                if (height <= sandLevel + 2)
+                //if (height <= sandLevel + 2)
+               // {
+                //    splatWeights[1] = 1.0f * ((sandLevel + 2) - height);
+                //}
+
+                if(height2 < sandLevel)
                 {
-                    splatWeights[1] = 1.0f * ((sandLevel + 2) - height);
+                    splatWeights[1] = 1.0f;
                 }
 
                 // Texture[2] stronger on flatter terrain
@@ -371,10 +406,16 @@ public class WildGenerator : MonoBehaviour {
                 // Texture[3] increases with height but only on surfaces facing positive Z axis 
                 splatWeights[3] = 0;//Mathf.Clamp01(steepness) * 10; //height * (Mathf.Clamp01(normal.z) + Mathf.Clamp01(normal.x) + Mathf.Clamp01(normal.y));  //height * Mathf.Clamp01(normal.z);
                 
-                if(steepness > 24 && height > sandLevel)
+                //if(steepness > 24 && height > sandLevel)
+                //{
+                //    splatWeights[3] = 1.0f * (steepness) - 24;
+                //}
+
+                if (steepness > 24 && height2 > sandLevel)
                 {
                     splatWeights[3] = 1.0f * (steepness) - 24;
                 }
+
                 // Sum of all textures weights must add to 1, so calculate normalization factor from sum of weights
                 float z = splatWeights.Sum();
                  
@@ -444,6 +485,52 @@ public class WildGenerator : MonoBehaviour {
         {
             g.transform.position = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)), g.transform.position.z);
         }
+    }
+
+    void rotateWildObjectsOnTerrain()
+    {
+        Debug.Log("Here");
+        //make platform adjust terrain rotation
+        RaycastHit rcHit;
+
+        //Make raycast direction down
+        Ray ray;
+
+        //set a mask which will ensure the ray only collides with terrain
+        LayerMask mask = 1 << 10;
+
+        //int tallyObjectsChecked = 0;
+
+        //int tallyRaysHit = 0;
+
+        foreach(GameObject g in theWild)
+        {
+            //Debug.Log("Here!");
+            int offsetHeight = 100;
+
+            Vector3 start = new Vector3(g.transform.position.x, g.transform.position.y + offsetHeight, g.transform.position.z);
+
+            ray = new Ray(start, Vector3.down);
+
+            if (Physics.Raycast(ray, out rcHit, 1000, mask))
+            {
+                //Debug.Log("HIT!");
+                //this is for getting distance from object to the ground
+                float GroundDis = rcHit.distance;
+                //with this you rotate object to adjust with terrain
+                g.transform.rotation = Quaternion.FromToRotation(g.transform.up, rcHit.normal);
+
+                //finally, this is for putting object IN the ground
+                g.transform.position = new Vector3(rcHit.point.x, rcHit.point.y, rcHit.point.z);
+
+                //tallyRaysHit++;
+            }
+
+            //tallyObjectsChecked++;
+        }
+
+        //Debug.Log(tallyObjectsChecked);
+        //Debug.Log(tallyRaysHit);
     }
 
     //collects all towns in the scene
