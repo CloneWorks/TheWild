@@ -37,7 +37,10 @@ public class WildGenerator : MonoBehaviour {
     public float sandLevel; //the height of the sand, usually a little above the water
 
     [Range(0,90)]
-    public float steep = 24.0f; //holds an angle of steepness which we consider too steep for folage and is likely a rock face
+    public float steep2 = 24.0f; //holds an angle of steepness which we consider too steep for folage and is likely a rock face
+    
+    [Range(0, 90)]
+    public float steep = 28.0f;
 
     public GameObject water; //holds the water
 
@@ -236,7 +239,7 @@ public class WildGenerator : MonoBehaviour {
                     float steepness = terrain.terrainData.GetSteepness(normalizedX, normalizedY); //Steepness is an angle between 0 and 90 degrees
 
                     //check if object is too close to the player or a town
-                    if(Vector3.Distance(player.transform.position, objPos) >= spawnRadiusOfPlayer && !NearATown(objPos) && objPos.y > sandLevel && steepness < steep)
+                    if(Vector3.Distance(player.transform.position, objPos) >= spawnRadiusOfPlayer && !NearATown(objPos) && objPos.y > sandLevel && steepness < steep2)
                     {
                         //create object
                         GameObject newObj = Instantiate(objects[randObj], objPos, Quaternion.identity);
@@ -420,6 +423,10 @@ public class WildGenerator : MonoBehaviour {
                 // Subtract result from 1.0 to give greater weighting to flat surfaces
                 splatWeights[2] = 0;
 
+                if (steepness > steep && height2 >= sandLevel)
+                {
+                    splatWeights[2] = 1.0f * (steepness) - steep;
+                }
                 //splatWeights[2] = 1.0f - Mathf.Clamp01(steepness*steepness/(terrainData.heightmapHeight/5.0f));
                  
                 // Texture[3] increases with height but only on surfaces facing positive Z axis 
@@ -430,9 +437,9 @@ public class WildGenerator : MonoBehaviour {
                 //    splatWeights[3] = 1.0f * (steepness) - 24;
                 //}
 
-                if (steepness > steep && height2 >= sandLevel)
+                if (steepness >= steep2 && height2 >= sandLevel)
                 {
-                    splatWeights[3] = 1.0f * (steepness) - 24;
+                    splatWeights[3] = 1.2f * (steepness)- steep2;
                 }
 
                 //load stones from original terrain

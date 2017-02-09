@@ -7,7 +7,8 @@ public class PlayerSounds : MonoBehaviour {
     int surfaceIndex;
 
     public float waterLevel = 20.0f;
-    public AudioClip dirtGrass;
+    public AudioClip grass;
+    public AudioClip dirt;
     public AudioClip stone;
     public AudioClip water;
     public AudioClip sand;
@@ -32,7 +33,7 @@ public class PlayerSounds : MonoBehaviour {
 	void Update () {
 
         //if player is moving
-        if(rigid.velocity.magnitude > 0)
+        if(rigid.velocity.magnitude > 0.1)
         {
             
             
@@ -45,7 +46,7 @@ public class PlayerSounds : MonoBehaviour {
                 {
                     if(surfaceIndex == 0) //is grass
                     {
-                        footsteps.clip = dirtGrass;
+                        footsteps.clip = grass;
                     }
 
                     if(surfaceIndex == 1) //is sand
@@ -53,17 +54,17 @@ public class PlayerSounds : MonoBehaviour {
                         footsteps.clip = sand;
                     }
 
-                    if (surfaceIndex == 2) //dirt
+                    if (surfaceIndex == 2) //is dirt
                     {
-                        footsteps.clip = dirtGrass;
+                        footsteps.clip = dirt;
                     }
 
-                    if (surfaceIndex == 3) //stone
+                    if (surfaceIndex == 3) //is stone
                     {
                         footsteps.clip = stone;
                     }
 
-                    if (surfaceIndex == 4) //stone path
+                    if (surfaceIndex == 4) //is stone path
                     {
                         footsteps.clip = stone;
                     }
