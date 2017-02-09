@@ -375,7 +375,12 @@ public class WildGenerator : MonoBehaviour {
                 // CHANGE THE RULES BELOW TO SET THE WEIGHTS OF EACH TEXTURE ON WHATEVER RULES YOU WANT
      
                 // Texture[0] has constant influence
-                splatWeights[0] = 1f;
+                splatWeights[0] = 0f;
+
+                if(height2 > sandLevel)
+                {
+                    splatWeights[0] = 1f;
+                }
 
                 //if(height > sandLevel)
                 //{
@@ -405,7 +410,7 @@ public class WildGenerator : MonoBehaviour {
                 //    splatWeights[1] = 1.0f * ((sandLevel + 2) - height);
                 //}
 
-                if(height2 < sandLevel)
+                if(height2 <= sandLevel)
                 {
                     splatWeights[1] = 1.0f;
                 }
