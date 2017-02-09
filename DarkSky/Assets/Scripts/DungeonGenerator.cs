@@ -739,7 +739,7 @@ public class DungeonGenerator : MonoBehaviour {
                 pieceToCreate.transform.parent = transform;
 
                 //pick a rotation
-                int yRotation = 270;
+                int yRotation = 0; //was 270
                 pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
             }
 
@@ -750,7 +750,7 @@ public class DungeonGenerator : MonoBehaviour {
                 pieceToCreate.transform.parent = transform;
 
                 //pick a rotation
-                int yRotation = 0;
+                int yRotation = 90; //was 0
                 pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
             }
 
@@ -761,7 +761,7 @@ public class DungeonGenerator : MonoBehaviour {
                 pieceToCreate.transform.parent = transform;
 
                 //pick a rotation
-                int yRotation = 180;
+                int yRotation = 270; //was 180
                 pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
             }
 
@@ -772,7 +772,7 @@ public class DungeonGenerator : MonoBehaviour {
                 pieceToCreate.transform.parent = transform;
 
                 //pick a rotation
-                int yRotation = 90;
+                int yRotation = 180; //was 90
                 pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
             }
 
@@ -795,7 +795,7 @@ public class DungeonGenerator : MonoBehaviour {
                 pieceToCreate.transform.parent = transform;
 
                 //pick a rotation
-                int yRotation = 0;
+                int yRotation = 90; //was 0
                 pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
             }
 
@@ -806,7 +806,7 @@ public class DungeonGenerator : MonoBehaviour {
                 pieceToCreate.transform.parent = transform;
 
                 //pick a rotation
-                int yRotation = 180;
+                int yRotation = 270; //was 180
                 pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
             }
 
@@ -817,7 +817,7 @@ public class DungeonGenerator : MonoBehaviour {
                 pieceToCreate.transform.parent = transform;
 
                 //pick a rotation
-                int yRotation = 90;
+                int yRotation = 180; //was 90
                 pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
             }
 
@@ -828,7 +828,7 @@ public class DungeonGenerator : MonoBehaviour {
                 pieceToCreate.transform.parent = transform;
 
                 //pick a rotation
-                int yRotation = 270;
+                int yRotation = 0; //was 270
                 pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
             }
 
