@@ -50,6 +50,9 @@ public class WildGenerator : MonoBehaviour {
     public float spawnRadiusOfTowns = 5f; //how far an object must be to be created near a town
     public List<GameObject> towns = new List<GameObject>();
 
+    [Header("Wild Life")]
+    public List<GameObject> creatures = new List<GameObject>();
+
     [Header("Terrain Data")]
     public Terrain islandMask; //holds data which will make generation into an island
 
@@ -161,6 +164,9 @@ public class WildGenerator : MonoBehaviour {
         //place water
         water.transform.position = new Vector3(water.transform.position.x, waterLevel, water.transform.position.z);
 
+        //place creatures
+        placeCreaturesOnTerrain();
+
         //texture terrain
         textureTerrain();
 
@@ -203,6 +209,9 @@ public class WildGenerator : MonoBehaviour {
 
         //place water
         water.transform.position = new Vector3(water.transform.position.x, waterLevel, water.transform.position.z);
+
+        //place creatures
+        placeCreaturesOnTerrain();
 
         //texture terrain
         textureTerrain();
@@ -522,6 +531,19 @@ public class WildGenerator : MonoBehaviour {
         }
     }
 
+    //places all creature tagged objects onto the terrain
+    void placeCreaturesOnTerrain()
+    {
+        creatures.Clear();
+
+        GetCreatures();
+
+        foreach (GameObject g in creatures)
+        {
+            g.transform.position = new Vector3(g.transform.position.x, terrain.SampleHeight(new Vector3(g.transform.position.x, 0, g.transform.position.z)), g.transform.position.z);
+        }
+    }
+
     void rotateWildObjectsOnTerrain()
     {
         Debug.Log("Here");
@@ -577,6 +599,18 @@ public class WildGenerator : MonoBehaviour {
         foreach(GameObject g in TownsInScene)
         {
             towns.Add(g);
+        }
+    }
+
+    //collect all the creatures in the wild
+    void GetCreatures()
+    {
+        GameObject[] CreaturesInScene = GameObject.FindGameObjectsWithTag("Creature");
+
+        //loop through adding all creatures to creature list
+        foreach (GameObject g in CreaturesInScene)
+        {
+            creatures.Add(g);
         }
     }
 
