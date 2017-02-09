@@ -26,7 +26,10 @@ public class LoadNewScene : MonoBehaviour {
             //save players position
             GameManager gm = FindObjectOfType<GameManager>();
 
-            gm.playerPos = other.transform.position - other.transform.forward*1; //new Vector3(other.transform.position.x + 2f, other.transform.position.y, other.transform.position.z);
+            gm.playerPos = other.transform.position - other.transform.forward*2f; //new Vector3(other.transform.position.x + 2f, other.transform.position.y, other.transform.position.z);
+
+            //lift up slightly
+            gm.playerPos.y += 0.05f;
         }
         
         
