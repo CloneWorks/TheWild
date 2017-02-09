@@ -36,6 +36,9 @@ public class WildGenerator : MonoBehaviour {
 
     public float sandLevel; //the height of the sand, usually a little above the water
 
+    [Range(0,90)]
+    public float steep = 24.0f; //holds an angle of steepness which we consider too steep for folage and is likely a rock face
+
     public GameObject water; //holds the water
 
     public float raiseTerrain = 0.1f; //a fixed amount to add to terrain height
@@ -223,8 +226,17 @@ public class WildGenerator : MonoBehaviour {
                     //set object position
                     Vector3 objPos = new Vector3(x + terrainPosition.x + xJit, terrain.SampleHeight(new Vector3(x + terrainPosition.x + xJit, 0, z + terrainPosition.z + zJit)), z + terrainPosition.z + zJit);
 
+                    float terrainOffsetX = Mathf.Abs(terrain.transform.position.x);
+                    float terrainOffsetZ = Mathf.Abs(terrain.transform.position.z);
+
+                    //get the steepness of the terrain at this point
+                    float normalizedX = (objPos.x + terrainOffsetX) / terrain.terrainData.size.x;
+                    float normalizedY = (objPos.z + terrainOffsetZ) / terrain.terrainData.size.z;
+
+                    float steepness = terrain.terrainData.GetSteepness(normalizedX, normalizedY); //Steepness is an angle between 0 and 90 degrees
+
                     //check if object is too close to the player or a town
-                    if(Vector3.Distance(player.transform.position, objPos) >= spawnRadiusOfPlayer && !NearATown(objPos) && objPos.y > sandLevel)
+                    if(Vector3.Distance(player.transform.position, objPos) >= spawnRadiusOfPlayer && !NearATown(objPos) && objPos.y > sandLevel && steepness < steep)
                     {
                         //create object
                         GameObject newObj = Instantiate(objects[randObj], objPos, Quaternion.identity);
@@ -413,7 +425,7 @@ public class WildGenerator : MonoBehaviour {
                 //    splatWeights[3] = 1.0f * (steepness) - 24;
                 //}
 
-                if (steepness > 24 && height2 >= sandLevel)
+                if (steepness > steep && height2 >= sandLevel)
                 {
                     splatWeights[3] = 1.0f * (steepness) - 24;
                 }
