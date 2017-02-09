@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerSounds : MonoBehaviour {
 
@@ -40,8 +41,16 @@ public class PlayerSounds : MonoBehaviour {
             //if running or walking
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Locomotion"))
             {
-                surfaceIndex = TerrainSurface.GetMainTexture(transform.position);
+                if(Terrain.activeTerrain != null)
+                {
+                    surfaceIndex = TerrainSurface.GetMainTexture(transform.position);
+                }
+                else
+                {
+                    surfaceIndex = 3; //make stone the default sound
+                }
 
+                //while in the wild and above water
                 if (transform.position.y > waterLevel) 
                 {
                     if(surfaceIndex == 0) //is grass
@@ -71,7 +80,15 @@ public class PlayerSounds : MonoBehaviour {
                 }
                 else //must be in the water (might want to update later to ensure he's not swimming)
                 {
-                    footsteps.clip = water;
+                    //but if in dungeon you're not
+                    if (SceneManager.GetActiveScene().buildIndex == 3)
+                    {
+                        footsteps.clip = stone;
+                    }
+                    else
+                    {
+                        footsteps.clip = water;
+                    }
                 }
 
                 //play sound if not playing
