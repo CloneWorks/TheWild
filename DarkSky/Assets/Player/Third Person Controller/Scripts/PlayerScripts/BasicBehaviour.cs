@@ -198,7 +198,7 @@ public abstract class GenericBehaviour : MonoBehaviour
 
 		// Set the behaviour code based on the inheriting class.
 		behaviourCode = this.GetType().GetHashCode();
-		distToGround = GetComponent<Collider>().bounds.extents.y;
+        distToGround = GetComponent<Collider>().bounds.extents.y; //as my players transform is on the ground we don't need collider information any more
 	}
 
 	// Protected, virtual functions can be overridden by inheriting classes.
@@ -219,6 +219,7 @@ public abstract class GenericBehaviour : MonoBehaviour
 
 	// Function to tell whether or not the player is on ground.
 	public bool IsGrounded() {
+        Vector3 fromPos = new Vector3(transform.position.x, transform.position.y + distToGround, transform.position.z);
 		return Physics.Raycast(transform.position, Vector3.down, distToGround + distanceToGroundExtra);
 	}
 }
