@@ -16,6 +16,9 @@ public class WildGenerator : MonoBehaviour {
     [Tooltip("Out of 100%")]
     public List<int> objectDensity; //a list containing the density for each object
 
+    [Tooltip("Apply Terrain slope Rotation to objects in the wild")]
+    public List<bool> applyRotation;
+
     public List<float> scaleMin; //The minimum range in which an objects scale can change
     public List<float> scaleMax; //The maximum range in which an objects scale can change
 
@@ -562,27 +565,42 @@ public class WildGenerator : MonoBehaviour {
 
         foreach(GameObject g in theWild)
         {
-            //Debug.Log("Here!");
-            int offsetHeight = 100;
+            int index = 0;
+            string s = "(Clone)";
 
-            Vector3 start = new Vector3(g.transform.position.x, g.transform.position.y + offsetHeight, g.transform.position.z);
-
-            ray = new Ray(start, Vector3.down);
-
-            if (Physics.Raycast(ray, out rcHit, 1000, mask))
+            foreach(GameObject o in objects)
             {
-                //Debug.Log("HIT!");
-                //this is for getting distance from object to the ground
-                float GroundDis = rcHit.distance;
-                //with this you rotate object to adjust with terrain
-                g.transform.rotation = Quaternion.FromToRotation(g.transform.up, rcHit.normal);
-
-                //finally, this is for putting object IN the ground
-                g.transform.position = new Vector3(rcHit.point.x, rcHit.point.y, rcHit.point.z);
-
-                //tallyRaysHit++;
+                if(o.name == g.name.Replace(s, ""))
+                {
+                    index = objects.IndexOf(o);
+                }
             }
 
+            //rotate if object is meant to be rotated
+            if(applyRotation[index])
+            {
+                //Debug.Log("Here!");
+                int offsetHeight = 100;
+
+                Vector3 start = new Vector3(g.transform.position.x, g.transform.position.y + offsetHeight, g.transform.position.z);
+
+                ray = new Ray(start, Vector3.down);
+
+                if (Physics.Raycast(ray, out rcHit, 1000, mask))
+                {
+                    //Debug.Log("HIT!");
+                    //this is for getting distance from object to the ground
+                    float GroundDis = rcHit.distance;
+                    //with this you rotate object to adjust with terrain
+                    g.transform.rotation = Quaternion.FromToRotation(g.transform.up, rcHit.normal);
+
+                    //finally, this is for putting object IN the ground
+                    g.transform.position = new Vector3(rcHit.point.x, rcHit.point.y, rcHit.point.z);
+
+                    //tallyRaysHit++;
+                }
+            }
+            
             //tallyObjectsChecked++;
         }
 
