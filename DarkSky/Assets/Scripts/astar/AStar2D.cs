@@ -41,55 +41,55 @@ public class AStar2D : MonoBehaviour {
 	public GameObject floorTile = null;
 	
 	
-    void OnGUI() {
-        Ax = GUI.TextField(new Rect(50, 10, 160, 20), Ax, 25);
-		Ay = GUI.TextField(new Rect(50, 10+20, 160, 20), Ay, 25);
+    //void OnGUI() {
+    //    Ax = GUI.TextField(new Rect(50, 10, 160, 20), Ax, 25);
+    //    Ay = GUI.TextField(new Rect(50, 10+20, 160, 20), Ay, 25);
 		
-		Bx = GUI.TextField(new Rect(50, 10+20+20, 160, 20), Bx, 25);
-		By = GUI.TextField(new Rect(50, 10+20+20+20, 160, 20), By, 25);
+    //    Bx = GUI.TextField(new Rect(50, 10+20+20, 160, 20), Bx, 25);
+    //    By = GUI.TextField(new Rect(50, 10+20+20+20, 160, 20), By, 25);
 		
-		GUI.Label(new Rect(10, 10, 50, 20), "A X:");
-		GUI.Label(new Rect(10, 10+20, 50, 20), "A Y:");
+    //    GUI.Label(new Rect(10, 10, 50, 20), "A X:");
+    //    GUI.Label(new Rect(10, 10+20, 50, 20), "A Y:");
 		  
-		GUI.Label(new Rect(10, 10+20+20, 50, 20), "B X:");
-		GUI.Label(new Rect(10, 10+20+20+20, 50, 20), "B Y:");
+    //    GUI.Label(new Rect(10, 10+20+20, 50, 20), "B X:");
+    //    GUI.Label(new Rect(10, 10+20+20+20, 50, 20), "B Y:");
 			
-		 if (GUI.Button(new Rect(10+200, 10, 200, 80), "Calculate path")){
+    //     if (GUI.Button(new Rect(10+200, 10, 200, 80), "Calculate path")){
 			 
-			 path = new List<node>();
+    //         path = new List<node>();
 			 
-			 cloneWorldArrayIntoLocal ();
-			 started = true;
-			 //quickLocalArrayReset();
+    //         cloneWorldArrayIntoLocal ();
+    //         started = true;
+    //         //quickLocalArrayReset();
 			 
-			 Vector3 startPos = new Vector3(int.Parse(Ax),0,int.Parse(Ay));
-			 startPos = world.WorldToArrayPosition (startPos);
-			 startPos.y = 0;
-			 node start = localWorldArray [(int)startPos.x, (int)startPos.y, (int)startPos.z];
+    //         Vector3 startPos = new Vector3(int.Parse(Ax),0,int.Parse(Ay));
+    //         startPos = world.WorldToArrayPosition (startPos);
+    //         startPos.y = 0;
+    //         node start = localWorldArray [(int)startPos.x, (int)startPos.y, (int)startPos.z];
 			 
-			 Vector3 goalPos = new Vector3(int.Parse(Bx),1,int.Parse(By));
-			 goalPos = world.WorldToArrayPosition (goalPos);
-			 goalPos.y = 0;
-			 node goal = localWorldArray [(int)goalPos.x, (int)goalPos.y, (int)goalPos.z];
+    //         Vector3 goalPos = new Vector3(int.Parse(Bx),1,int.Parse(By));
+    //         goalPos = world.WorldToArrayPosition (goalPos);
+    //         goalPos.y = 0;
+    //         node goal = localWorldArray [(int)goalPos.x, (int)goalPos.y, (int)goalPos.z];
 			 
-			 path = findPath(start, goal);
+    //         path = findPath(start, goal);
 			 
-			 foreach (node n in path){
-				 if(n != null){
-					Vector3 position = world.ArrayToWorldPosition(n.nodePos, false);
-					position.y = 0;
-					//piece must be in a good location, so place it:
-					GameObject pieceToCreate = Instantiate(floorTile, position, floorTile.transform.rotation);
-					pieceToCreate.transform.parent = transform;
+    //         foreach (node n in path){
+    //             if(n != null){
+    //                Vector3 position = world.ArrayToWorldPosition(n.nodePos, false);
+    //                position.y = 0;
+    //                //piece must be in a good location, so place it:
+    //                GameObject pieceToCreate = Instantiate(floorTile, position, floorTile.transform.rotation);
+    //                pieceToCreate.transform.parent = transform;
 
-					//pick a random rotation
-					int yRotation = random90DegreeRotation();
-					pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
-				 }
-			 }
-		 }
+    //                //pick a random rotation
+    //                int yRotation = random90DegreeRotation();
+    //                pieceToCreate.transform.eulerAngles = new Vector3(pieceToCreate.transform.eulerAngles.x, yRotation, pieceToCreate.transform.eulerAngles.z);
+    //             }
+    //         }
+    //     }
             
-    }
+    //}
 	/// <summary>
     /// Returns a random rotation out of (0, 90, 180, and 270)
     /// </summary>
