@@ -18,6 +18,8 @@ public class PlayerSounds : MonoBehaviour {
     private Rigidbody rigid;
     private AudioSource footsteps;
 
+    private bool inWater = false;
+
 	// Use this for initialization
 	void Start () {
         //Get Animator Controller
@@ -51,7 +53,7 @@ public class PlayerSounds : MonoBehaviour {
                 }
 
                 //while in the wild and above water
-                if (transform.position.y > waterLevel) 
+                if (!inWater) 
                 {
                     if(surfaceIndex == 0) //is grass
                     {
@@ -114,5 +116,26 @@ public class PlayerSounds : MonoBehaviour {
                 footsteps.Stop();
             }
         }
+
+        if(transform.position.y > waterLevel)
+        {
+            inWater = false;
+        }
 	}
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Water" && transform.position.y < waterLevel)
+        {
+            inWater = true;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Water")
+        {
+            inWater = false;
+        }
+    }
 }
