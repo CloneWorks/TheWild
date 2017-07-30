@@ -507,6 +507,9 @@ public class WildGenerator : MonoBehaviour {
 			Debug.Log ("Placing player at: " + gm.playerPos);
 
 			gm.Player.transform.position = gm.playerPos;
+
+			// no longer need to place the player here so blank it out
+			gm.playerPos = Vector3.zero; 
 		}
 
 		float terrainHeight = terrain.SampleHeight(new Vector3(player.transform.position.x, 0, player.transform.position.z));

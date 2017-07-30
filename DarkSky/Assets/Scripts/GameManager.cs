@@ -9,6 +9,9 @@ public class GameManager : MonoBehaviour {
 	public GameObject Player;
 	public Scene CurrentScene;
 
+	public WildGenerator TheWild;
+	public float waterLevel = 15.0f;
+
     public WorldClock time;
 	public GameObject WorldTime;
 
@@ -56,6 +59,12 @@ public class GameManager : MonoBehaviour {
 
 		// Get info about the current scene.
 		CurrentScene = SceneManager.GetActiveScene ();
+
+		if (CurrentScene.buildIndex == 0)
+		{
+			// Get the wild
+			TheWild = FindObjectOfType<WildGenerator>();
+		}
 
 		// Retrieve the name of this scene.
 		string sceneName = CurrentScene.name;
