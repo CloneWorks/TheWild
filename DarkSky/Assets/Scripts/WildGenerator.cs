@@ -497,19 +497,25 @@ public class WildGenerator : MonoBehaviour {
     //raises player to the height of the terrain at their position
     void placePlayerOnTerrain()
     {
-        //if the player has a saved position in the wild load it
-        if(gm.playerPos != Vector3.zero)
-        {
-            player.transform.position = gm.playerPos;
-        }
+		// Get access to game manager
+		GameManager gm = FindObjectOfType<GameManager>();
 
-        float terrainHeight = terrain.SampleHeight(new Vector3(player.transform.position.x, 0, player.transform.position.z));
+		// If the player has a saved position in the wild load it
+		if(gm.playerPos != Vector3.zero)
+		{
+			//Vector3 NewPos = new Vector3(playerPos.x, Player.transform.position.y, playerPos.z);
+			Debug.Log ("Placing player at: " + gm.playerPos);
 
-        if(player.transform.position.y < terrainHeight){
+			gm.Player.transform.position = gm.playerPos;
+		}
+
+		float terrainHeight = terrain.SampleHeight(new Vector3(player.transform.position.x, 0, player.transform.position.z));
+
+        if(player.transform.position.y < terrainHeight)
+		{
             player.transform.position = new Vector3(player.transform.position.x, terrainHeight , player.transform.position.z);
             flattern(player.transform.position, 1);
         }
-        
     }
 
     //raises all towns to the terrain height at their position
@@ -549,7 +555,6 @@ public class WildGenerator : MonoBehaviour {
 
     void rotateWildObjectsOnTerrain()
     {
-        Debug.Log("Here");
         //make platform adjust terrain rotation
         RaycastHit rcHit;
 
@@ -579,7 +584,6 @@ public class WildGenerator : MonoBehaviour {
             //rotate if object is meant to be rotated
             if(applyRotation[index])
             {
-                //Debug.Log("Here!");
                 int offsetHeight = 100;
 
                 Vector3 start = new Vector3(g.transform.position.x, g.transform.position.y + offsetHeight, g.transform.position.z);
@@ -588,7 +592,6 @@ public class WildGenerator : MonoBehaviour {
 
                 if (Physics.Raycast(ray, out rcHit, 1000, mask))
                 {
-                    //Debug.Log("HIT!");
                     //this is for getting distance from object to the ground
                     float GroundDis = rcHit.distance;
                     //with this you rotate object to adjust with terrain

@@ -34,6 +34,5 @@ public class LoadScene : MonoBehaviour {
         {
             yield return null;
         }
-
     }
 }
