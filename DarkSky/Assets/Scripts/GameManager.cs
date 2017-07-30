@@ -24,7 +24,8 @@ public class GameManager : MonoBehaviour {
 
     public bool wildReset = false; //ensures a world update only happens once per new day
 
-    public Vector3 playerPos = Vector3.zero; //store players previous position
+    public Vector3 playerPos = Vector3.zero; //store players spawn position
+	public Vector3 playerRot = Vector3.zero; //store players spawn rotation
 
 	public GameObject OurTimeSystem;
 
