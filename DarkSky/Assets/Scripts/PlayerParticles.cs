@@ -18,7 +18,7 @@ public class PlayerParticles : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		// If we leave the water turn particles off
-		if (gm.Player.transform.position.y > gm.waterLevel)
+		if (gm.Player != null && gm.Player.transform.position.y > gm.waterLevel)
 		{
 			//turn off
 			psRipple.Clear ();
