@@ -629,8 +629,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 0}
-  TheWild: {fileID: 0}
-  waterLevel: 15
   time: {fileID: 0}
   WorldTime: {fileID: 1737606252010302, guid: 11ee4dacd8f14f6429cfcad605027016, type: 2}
   terrain: {fileID: 0}
@@ -640,7 +638,6 @@ MonoBehaviour:
   wildRotations: []
   wildReset: 0
   playerPos: {x: 0, y: 0, z: 0}
-  playerRot: {x: 0, y: 0, z: 0}
   OurTimeSystem: {fileID: 0}
 --- !u!1 &1405873010
 GameObject:

@@ -57,11 +57,9 @@ MonoBehaviour:
   - {fileID: 100000, guid: 2ed0ee5d07a66944b888f6783479d8c3, type: 2}
   - {fileID: 100000, guid: 14f529e64428f734a9662a9b3291c162, type: 2}
   - {fileID: 100000, guid: 9546590a521587b41a51a348e04dde0e, type: 2}
-  - {fileID: 1951687445207450, guid: a9b9718a1ddb7634d85d5a75867f1703, type: 2}
-  objectDensity: 5000000032000000320000003200000001000000
-  applyRotation: 0001010101
+  objectDensity: 50000000320000003200000032000000
+  applyRotation: 
   scaleMin:
-  - 1
   - 1
   - 1
   - 1
@@ -71,24 +69,22 @@ MonoBehaviour:
   - 3
   - 3
   - 3
-  - 1
   rotation: 360
   xIncrement: 5
   zIncrement: 5
   xJitter: 2
   zJitter: 2
   spawnRadiusOfPlayer: 5
-  waterLevel: 15
-  sandLevel: 20
-  steep2: 35
-  steep: 29
+  waterLevel: 1
+  sandLevel: 0
+  steep2: 24
+  steep: 28
   water: {fileID: 0}
-  raiseTerrain: 0.01
-  spawnRadiusOfTowns: 20
+  raiseTerrain: 0.1
+  spawnRadiusOfTowns: 5
   towns: []
   creatures: []
-  islandMask: {fileID: 218948766679787888, guid: 6a322293a3faead4f99655077248e929,
-    type: 2}
+  islandMask: {fileID: 0}
   terrainSize: {x: 0, y: 0, z: 0}
   terrainPosition: {x: 0, y: 0, z: 0}
   theWild: []
