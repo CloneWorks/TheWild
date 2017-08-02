@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour {
 
 	public GameObject OurTimeSystem;
 
+	public int iTotalDays = 1;
+
     void Awake()
     {
         //Check if instance already exists

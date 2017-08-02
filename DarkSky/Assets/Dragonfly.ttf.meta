@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: d51a8bafd3145434eb4c88fd50b378fe
+timeCreated: 1501674403
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Dragonfly
+  fontNames:
+  - Dragonfly
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
