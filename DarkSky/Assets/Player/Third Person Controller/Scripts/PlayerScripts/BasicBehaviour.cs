@@ -219,7 +219,7 @@ public abstract class GenericBehaviour : MonoBehaviour
 
 	// Function to tell whether or not the player is on ground.
 	public bool IsGrounded() {
-        Vector3 fromPos = new Vector3(transform.position.x, transform.position.y + distToGround, transform.position.z);
+        //Vector3 fromPos = new Vector3(transform.position.x, transform.position.y + distToGround, transform.position.z);
 		return Physics.Raycast(transform.position, Vector3.down, distToGround + distanceToGroundExtra);
 	}
 }

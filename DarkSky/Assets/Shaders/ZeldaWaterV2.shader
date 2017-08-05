@@ -1,4 +1,6 @@
-﻿Shader "Custom/ZeldaWater_V2" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Custom/ZeldaWater_V2" {
 	Properties {
     	_MainTex ("Texture", 2D) = "white" { }
     	_Speed ("Speed", Range (0.001, 1.0)) = .2
@@ -103,7 +105,7 @@
 				float ns = snoise(float3(v.vertex.x * _NoiseScale, v.vertex.z * _NoiseScale, _Time.x * _WaveSpeed));
 				v.vertex.y += ns * _HeightScale;
 			    v2f o;
-			    o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+			    o.pos = UnityObjectToClipPos (v.vertex);
 			    o.uv = TRANSFORM_TEX (v.texcoord, _MainTex);
 			    return o;
 			}

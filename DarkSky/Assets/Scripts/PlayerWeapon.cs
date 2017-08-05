@@ -38,7 +38,7 @@ public class PlayerWeapon : MonoBehaviour {
         rightHand = GameObject.FindWithTag("RightHand");
 
         //get weapon position
-        weaponPos = rightHand.transform.FindChild("weaponPosition");
+        weaponPos = rightHand.transform.Find("weaponPosition");
 
         if(weildWeapon){
             //equipt weapon
@@ -110,13 +110,13 @@ public class PlayerWeapon : MonoBehaviour {
         //get hand positions from weapon prefab
         if (weapon.transform.childCount == 1)
         {
-            leftHandWeaponPos = weapon.transform.GetChild(0).transform.FindChild("leftHand");
-            rightHandWeaponPos = weapon.transform.GetChild(0).transform.FindChild("rightHand");
+            leftHandWeaponPos = weapon.transform.GetChild(0).transform.Find("leftHand");
+            rightHandWeaponPos = weapon.transform.GetChild(0).transform.Find("rightHand");
         }
         else
         {
-            leftHandWeaponPos = weapon.transform.FindChild("leftHand");
-            rightHandWeaponPos = weapon.transform.FindChild("rightHand");
+            leftHandWeaponPos = weapon.transform.Find("leftHand");
+            rightHandWeaponPos = weapon.transform.Find("rightHand");
         }
     }
 

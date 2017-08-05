@@ -65,3 +65,4 @@ MonoBehaviour:
   playerPos: {x: 0, y: 0, z: 0}
   playerRot: {x: 0, y: 0, z: 0}
   OurTimeSystem: {fileID: 0}
+  iTotalDays: 1
