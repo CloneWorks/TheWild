@@ -61,9 +61,17 @@ public class ThirdPersonOrbitCam : MonoBehaviour
 		// Get our OVR camera if it VR is on an not assigned
 		if (VRSettings.enabled == true && followMe == null) {
 			followMe = GameObject.Find ("MyOVRCameraRig");
-		}
+		} 
 
-		// Get mouse movement to orbit the camera.
+		//if (VRSettings.enabled == true || VRSettings.enabled == false) { //remove or if you don't want both controls on
+		//	// Get mouse movement to orbit the camera.
+		//	angleH += Mathf.Clamp (Input.GetAxis ("Joystick X"), -1, 1) * horizontalAimingSpeed * Time.deltaTime;
+		//	angleV += Mathf.Clamp (Input.GetAxis ("Joystick Y"), -1, 1) * verticalAimingSpeed * Time.deltaTime;
+		//} else {
+			// Get mouse movement to orbit the camera.
+		//	angleH += Mathf.Clamp(Input.GetAxis("Mouse X"), -1, 1) * horizontalAimingSpeed * Time.deltaTime;
+		//	angleV += Mathf.Clamp(Input.GetAxis("Mouse Y"), -1, 1) * verticalAimingSpeed * Time.deltaTime;
+		//}
 		angleH += Mathf.Clamp(Input.GetAxis("Mouse X"), -1, 1) * horizontalAimingSpeed * Time.deltaTime;
 		angleV += Mathf.Clamp(Input.GetAxis("Mouse Y"), -1, 1) * verticalAimingSpeed * Time.deltaTime;
 
