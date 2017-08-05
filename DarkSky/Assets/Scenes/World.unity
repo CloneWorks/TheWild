@@ -2765,16 +2765,16 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
-    - target: {fileID: 114723913647577908, guid: f78eabf7f7896e146a3bcd72b23f9dff,
-        type: 2}
-      propertyPath: mainCamera
-      value: 
-      objectReference: {fileID: 942302776}
     - target: {fileID: 114941673059870868, guid: f78eabf7f7896e146a3bcd72b23f9dff,
         type: 2}
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 284968321}
+    - target: {fileID: 114723913647577908, guid: f78eabf7f7896e146a3bcd72b23f9dff,
+        type: 2}
+      propertyPath: mainCamera
+      value: 
+      objectReference: {fileID: 942302776}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f78eabf7f7896e146a3bcd72b23f9dff, type: 2}
   m_IsPrefabParent: 0

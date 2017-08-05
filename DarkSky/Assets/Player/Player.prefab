@@ -1525,7 +1525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b86dbbaaa422b64d8a77740b0e66a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceToGroundExtra: 0.1
+  distanceToGroundExtra: 0.12
   flySpeed: 4
   flyMaxVerticalAngle: 60
 --- !u!124 &124452510817400842
