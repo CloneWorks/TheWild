@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.VR;
 
 public class GameManager : MonoBehaviour {
-    public static GameManager instance = null;              //Static instance of GameManager which allows it to be accessed by any other script.
+	public static GameManager instance = null;              //Static instance of GameManager which allows it to be accessed by any other script.
 
 	public GameObject Player;
 	public Scene CurrentScene;
@@ -12,48 +13,63 @@ public class GameManager : MonoBehaviour {
 	public WildGenerator TheWild;
 	public float waterLevel = 15.0f;
 
-    public WorldClock time;
+	public WorldClock time;
 	public GameObject WorldTime;
 
-    public TerrainData terrain; 
-    public List<int> wildObjects;       //store objects index number
-    public List<Vector3> wildLocations; //store objects location
+	public TerrainData terrain; 
+	public List<int> wildObjects;       //store objects index number
+	public List<Vector3> wildLocations; //store objects location
 
-    public List<float> wildScales;        //store objects scale
-    public List<float> wildRotations; //store objects Quaternion.Euler rotation
+	public List<float> wildScales;        //store objects scale
+	public List<float> wildRotations; //store objects Quaternion.Euler rotation
 
-    public bool wildReset = false; //ensures a world update only happens once per new day
+	public bool wildReset = false; //ensures a world update only happens once per new day
 
-    public Vector3 playerPos = Vector3.zero; //store players spawn position
+	public Vector3 playerPos = Vector3.zero; //store players spawn position
 	public Vector3 playerRot = Vector3.zero; //store players spawn rotation
 
 	public GameObject OurTimeSystem;
 
 	public int iTotalDays = 1;
 
-    void Awake()
-    {
-        //Check if instance already exists
-        if (instance == null)
-        {
-            //if not, set instance to this
-            instance = this;
+	[Header("Oculus VR")]
+	public GameObject OVRCam;
+	public bool UseVR = false;
+
+	void Awake()
+	{
+		//Check if instance already exists
+		if (instance == null)
+		{
+			//if not, set instance to this
+			instance = this;
 
 			// Must be first time creating this, we need our world clock, sun and moon!
 			OurTimeSystem = (GameObject)Instantiate(WorldTime);
 			time = OurTimeSystem.GetComponentInChildren<WorldClock>();
-        }
-        //If instance already exists and it's not this:
-        else if (instance != this)
-        {
-            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
-            Destroy(gameObject);
-        }
 
-        //Sets this to not be destroyed when reloading scene
-        DontDestroyOnLoad(gameObject);
+			// Need OVRCam if assigned
+			if (OVRCam != null && UseVR) {
+				OVRCam = (GameObject)Instantiate (OVRCam);
+				OVRCam.name = "MyOVRCameraRig";
+				DontDestroyOnLoad(OVRCam);
+				GameObject.Find ("Main Camera").GetComponent<AudioListener> ().enabled = false;
+			} else {
+				VRSettings.enabled = false;
+			}
 
-    }
+		}
+		//If instance already exists and it's not this:
+		else if (instance != this)
+		{
+			//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
+			Destroy(gameObject);
+		}
+
+		//Sets this to not be destroyed when reloading scene
+		DontDestroyOnLoad(gameObject);
+
+	}
 
 	void OnLevelWasLoaded()
 	{
@@ -97,8 +113,12 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-    void Update()
-    {
+	void Update()
+	{
+		if (UseVR && GameObject.Find ("Main Camera").GetComponent<AudioListener> ().enabled) {
+			GameObject.Find ("Main Camera").GetComponent<AudioListener> ().enabled = false;
+		}
+
 		// Load objects which might not have been set yet
 		if (Player == null) 
 		{
@@ -109,38 +129,38 @@ public class GameManager : MonoBehaviour {
 		{
 			CurrentScene = SceneManager.GetActiveScene ();	
 		}
-			
+
 		// Check for the new day
-        if (time.IsNewDay() && !wildReset)
-        {
-            wildReset = true;
-        }
-    }
+		if (time.IsNewDay() && !wildReset)
+		{
+			wildReset = true;
+		}
+	}
 
-    void OnApplicationQuit()
-    {
-        PlayerPrefs.SetInt("WildExsists", 0);
-    }
+	void OnApplicationQuit()
+	{
+		PlayerPrefs.SetInt("WildExsists", 0);
+	}
 
-    public void saveWild(TerrainData t, List<int> o, List<Vector3> v, List<float> s, List<float> r)
-    {
-        //store all data
-        terrain = t;
-        wildObjects = o;
-        wildLocations = v;
-        wildScales = s;
-        wildRotations = r;
+	public void saveWild(TerrainData t, List<int> o, List<Vector3> v, List<float> s, List<float> r)
+	{
+		//store all data
+		terrain = t;
+		wildObjects = o;
+		wildLocations = v;
+		wildScales = s;
+		wildRotations = r;
 
-        //mark wild as exsisting
-        PlayerPrefs.SetInt("WildExsists", 1);
-    }
+		//mark wild as exsisting
+		PlayerPrefs.SetInt("WildExsists", 1);
+	}
 
-    public void clearSaves()
-    {
-        terrain = null;
-        wildObjects.Clear();
-        wildLocations.Clear();
-        wildScales.Clear();
-        wildRotations.Clear();
-    }
+	public void clearSaves()
+	{
+		terrain = null;
+		wildObjects.Clear();
+		wildLocations.Clear();
+		wildScales.Clear();
+		wildRotations.Clear();
+	}
 }

@@ -43,7 +43,7 @@ MonoBehaviour:
     y: 0
     width: 1920
     height: 997
-  m_MinSize: {x: 950, y: 542}
+  m_MinSize: {x: 950, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &3
 MonoBehaviour:
@@ -106,7 +106,7 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 681, y: 492}
+  m_MinSize: {x: 683, y: 492}
   m_MaxSize: {x: 14004, y: 14042}
   vertical: 0
   controlID: 11
@@ -130,7 +130,7 @@ MonoBehaviour:
     y: 0
     width: 1439
     height: 947
-  m_MinSize: {x: 404, y: 492}
+  m_MinSize: {x: 406, y: 492}
   m_MaxSize: {x: 10002, y: 14042}
   vertical: 1
   controlID: 12
@@ -154,8 +154,8 @@ MonoBehaviour:
     y: 0
     width: 1439
     height: 676
-  m_MinSize: {x: 404, y: 221}
-  m_MaxSize: {x: 8004, y: 4021}
+  m_MinSize: {x: 406, y: 221}
+  m_MaxSize: {x: 8006, y: 4021}
   vertical: 0
   controlID: 13
 --- !u!114 &8
@@ -367,8 +367,8 @@ MonoBehaviour:
     height: 655
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 00fcffff
-    m_LastClickedID: -1024
+    m_SelectedIDs: 3ef9ffff
+    m_LastClickedID: -1730
     m_ExpandedIDs: 18fcffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -579,18 +579,18 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets
+    - Assets/OVR/Prefabs
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets
+  - Assets/OVR/Prefabs
   m_LastFoldersGridSize: -1
   m_LastProjectPath: E:\CloneWorks\GitProjects\TheWild\DarkSky
   m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 95}
-    m_SelectedIDs: 9e280000
-    m_LastClickedID: 10398
+    scrollPos: {x: 0, y: 295}
+    m_SelectedIDs: ce2a0000
+    m_LastClickedID: 10958
     m_ExpandedIDs: 000000009e280000a2280000e82800002a2900007c290000fa290000222a0000602a0000b82a0000482b0000542b0000662b0000b02b0000b22b0000c62b0000102c0000c42c0000ce2c0000282d00001a2e0000462e0000b82e0000142f0000362f0000ba2f000062300000a0300000ae300000fc300000023100001431000068310000ea3100001e3200003032000034320000363300007634000078340000ee3400000a35000056350000b63500001a3600002e360000463600006e3600004c4a00004e4a0000504a0000524a0000544a0000564a0000584a000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0

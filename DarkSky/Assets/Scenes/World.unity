@@ -5531,6 +5531,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 114631873442718796, guid: 5d9118a5f1f23e5438b89e1a34f34a8b,
+        type: 2}
+      propertyPath: UseVR
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5d9118a5f1f23e5438b89e1a34f34a8b, type: 2}
   m_IsPrefabParent: 0

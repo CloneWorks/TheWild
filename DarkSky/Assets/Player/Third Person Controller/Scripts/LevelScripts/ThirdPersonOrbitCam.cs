@@ -25,10 +25,15 @@ public class ThirdPersonOrbitCam : MonoBehaviour
 	private float targetFOV;                                           // Target camera FIeld of View.
 	private float targetMaxVerticalAngle;                              // Custom camera max vertical clamp angle. 
 
+	public GameObject followMe;
+
 	void Awake()
 	{
 		// Reference to the camera transform.
 		cam = transform;
+
+		// Get our OVR camera if it exsists
+		followMe = GameObject.Find("MyOVRCameraRig");
 
 		// Set camera default position.
 		cam.position = player.position + Quaternion.identity * pivotOffset + Quaternion.identity * camOffset;
@@ -82,6 +87,12 @@ public class ThirdPersonOrbitCam : MonoBehaviour
 		smoothCamOffset = Vector3.Lerp(smoothCamOffset, noCollisionOffset, smooth * Time.deltaTime);
 
 		cam.position =  player.position + camYRotation * smoothPivotOffset + aimRotation * smoothCamOffset;
+
+		// Position OVR cam if it exists
+		if (followMe != null) {
+			followMe.transform.position = cam.position;
+			followMe.transform.rotation = cam.rotation;
+		}
 	}
 
 	// Set camera offsets to custom values.
@@ -140,7 +151,7 @@ public class ThirdPersonOrbitCam : MonoBehaviour
 	{
 		RaycastHit hit;
 
-        LayerMask mask = 1 << 9; //ignore dungeon piece radius
+		LayerMask mask = 1 << 9; //ignore dungeon piece radius
 
 		// If a raycast from the check position to the player hits something...
 		if(Physics.Raycast(checkPos, player.position+(Vector3.up* deltaPlayerHeight) - checkPos, out hit, relCameraPosMag, ~mask))
@@ -160,7 +171,7 @@ public class ThirdPersonOrbitCam : MonoBehaviour
 	bool ReverseViewingPosCheck(Vector3 checkPos, float deltaPlayerHeight)
 	{
 		RaycastHit hit;
-        LayerMask mask = 1 << 9; //ignore dungeon piece radius
+		LayerMask mask = 1 << 9; //ignore dungeon piece radius
 
 		if(Physics.Raycast(player.position+(Vector3.up* deltaPlayerHeight), checkPos - player.position, out hit, relCameraPosMag, ~mask))
 		{
