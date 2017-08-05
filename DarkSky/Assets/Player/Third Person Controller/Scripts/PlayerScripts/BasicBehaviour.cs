@@ -220,6 +220,21 @@ public abstract class GenericBehaviour : MonoBehaviour
 	// Function to tell whether or not the player is on ground.
 	public bool IsGrounded() {
         //Vector3 fromPos = new Vector3(transform.position.x, transform.position.y + distToGround, transform.position.z);
-		return Physics.Raycast(transform.position, Vector3.down, distToGround + distanceToGroundExtra);
+        //ignore player player, this stops the grounded function firsing on the players collider
+        var layerMask = ~((1 << 11) | (1 << Physics.IgnoreRaycastLayer)); // | (1 << 13) | (1 << 15)
+        Vector3 offSetToAboveFeet = new Vector3(transform.position.x, transform.position.y + (distToGround/2), transform.position.z);
+       // Debug.DrawRay(offSetToAboveFeet, Vector3.down, out hit, distToGround + distanceToGroundExtra, layerMask);
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(offSetToAboveFeet, Vector3.down, out hit, distToGround + distanceToGroundExtra, layerMask))
+        {
+            Debug.DrawLine(offSetToAboveFeet, hit.point);
+            //anim.SetBool("Grounded", true); 
+            print("Found an object - " + hit.collider.gameObject.name);
+        }
+           
+
+        return Physics.Raycast(offSetToAboveFeet, Vector3.down, distToGround + distanceToGroundExtra, layerMask);
 	}
 }
