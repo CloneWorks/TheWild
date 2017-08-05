@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.VR;
 
 public class ThirdPersonOrbitCam : MonoBehaviour 
 {
@@ -33,7 +34,9 @@ public class ThirdPersonOrbitCam : MonoBehaviour
 		cam = transform;
 
 		// Get our OVR camera if it exsists
-		followMe = GameObject.Find("MyOVRCameraRig");
+		if (VRSettings.enabled == true) {
+			followMe = GameObject.Find ("MyOVRCameraRig");
+		}
 
 		// Set camera default position.
 		cam.position = player.position + Quaternion.identity * pivotOffset + Quaternion.identity * camOffset;
@@ -55,6 +58,11 @@ public class ThirdPersonOrbitCam : MonoBehaviour
 
 	void LateUpdate()
 	{
+		// Get our OVR camera if it VR is on an not assigned
+		if (VRSettings.enabled == true && followMe == null) {
+			followMe = GameObject.Find ("MyOVRCameraRig");
+		}
+
 		// Get mouse movement to orbit the camera.
 		angleH += Mathf.Clamp(Input.GetAxis("Mouse X"), -1, 1) * horizontalAimingSpeed * Time.deltaTime;
 		angleV += Mathf.Clamp(Input.GetAxis("Mouse Y"), -1, 1) * verticalAimingSpeed * Time.deltaTime;
@@ -68,7 +76,11 @@ public class ThirdPersonOrbitCam : MonoBehaviour
 		cam.rotation = aimRotation;
 
 		// Set FOV.
-		cam.GetComponent<Camera>().fieldOfView = Mathf.Lerp (cam.GetComponent<Camera>().fieldOfView, targetFOV,  Time.deltaTime);
+		if (VRSettings.enabled == false)
+		{
+			cam.GetComponent<Camera>().fieldOfView = Mathf.Lerp (cam.GetComponent<Camera>().fieldOfView, targetFOV,  Time.deltaTime);
+		}
+
 
 		// Test for collision with the environment based on current camera position.
 		Vector3 baseTempPosition = player.position + camYRotation * targetPivotOffset;
