@@ -52,7 +52,7 @@ public class FlyBehaviour : GenericBehaviour {
 		fly = fly && behaviourManager.IsCurrentBehaviour (this.behaviourCode);
 
 		// Set fly related variables on the Animator Controller.
-		anim.SetBool (groundedBool, IsGrounded ());
+		//anim.SetBool (groundedBool, isGrounded());
 		anim.SetBool (flyBool, fly);
 	}
 

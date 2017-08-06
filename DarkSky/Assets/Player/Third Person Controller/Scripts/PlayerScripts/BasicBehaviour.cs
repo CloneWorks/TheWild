@@ -60,7 +60,7 @@ public class BasicBehaviour : MonoBehaviour
 		{
 			camScript.ResetFOV();
 		}
-	}
+    }
 
 	void FixedUpdate()
 	{
@@ -182,9 +182,9 @@ public abstract class GenericBehaviour : MonoBehaviour
 	protected ThirdPersonOrbitCam camScript;       // Reference to the third person camera script.
 	protected int behaviourCode;                   // The code that identifies a behaviour.
 	protected bool canSprint;                      // Boolean to store if the behaviour allows the player to sprint.
-	protected float distToGround;                  // Actual distance to ground.
+    protected float distToGround;                  // Actual distance to ground.
 
-    public float distanceToGroundExtra = 0.1f;         //An extra offset to ensure the player is near ground and doesn't fall below it
+    public float distanceToGroundExtra = 0.5f;         //An extra offset to ensure the player is near ground and doesn't fall below it
 
 	void Awake()
 	{
@@ -201,9 +201,30 @@ public abstract class GenericBehaviour : MonoBehaviour
         distToGround = GetComponent<Collider>().bounds.extents.y; //as my players transform is on the ground we don't need collider information any more
 	}
 
-	// Protected, virtual functions can be overridden by inheriting classes.
-	// Here the custom active behaviour will control the player actions.
-	public abstract void LocalFixedUpdate ();
+    void Update()
+    {
+        if (!anim.GetBool("Grounded"))
+        {
+            print("looking for the ground!");
+            IsGrounded();
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        if (anim.GetBool("Grounded"))
+        {
+            Gizmos.color = Color.green;
+        }
+        else {
+            Gizmos.color = Color.red;
+        }
+        Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y + (distToGround), transform.position.z), distToGround/2);
+    }
+
+    // Protected, virtual functions can be overridden by inheriting classes.
+    // Here the custom active behaviour will control the player actions.
+    public abstract void LocalFixedUpdate ();
 
 	// Get the behaviour code.
 	public int GetBehaviourCode()
@@ -217,24 +238,36 @@ public abstract class GenericBehaviour : MonoBehaviour
 		return canSprint;
 	}
 
-	// Function to tell whether or not the player is on ground.
+	//// Function to tell whether or not the player is on ground.
 	public bool IsGrounded() {
-        //Vector3 fromPos = new Vector3(transform.position.x, transform.position.y + distToGround, transform.position.z);
-        //ignore player player, this stops the grounded function firsing on the players collider
+        ////Vector3 fromPos = new Vector3(transform.position.x, transform.position.y + distToGround, transform.position.z);
+        ////ignore player player, this stops the grounded function firsing on the players collider
         var layerMask = ~((1 << 11) | (1 << Physics.IgnoreRaycastLayer)); // | (1 << 13) | (1 << 15)
-        Vector3 offSetToAboveFeet = new Vector3(transform.position.x, transform.position.y + (distToGround/2), transform.position.z);
-       // Debug.DrawRay(offSetToAboveFeet, Vector3.down, out hit, distToGround + distanceToGroundExtra, layerMask);
-
+        Vector3 offSetToAboveFeet = new Vector3(transform.position.x, transform.position.y + (distToGround*2), transform.position.z);
+        //Debug.DrawRay(offSetToAboveFeet, Vector3.down, Color.red,1);
+        Debug.DrawLine(offSetToAboveFeet, new Vector3(offSetToAboveFeet.x, offSetToAboveFeet.y - (distToGround * 2) - distanceToGroundExtra, offSetToAboveFeet.z), Color.red, 2);
         RaycastHit hit;
 
-        if (Physics.Raycast(offSetToAboveFeet, Vector3.down, out hit, distToGround + distanceToGroundExtra, layerMask))
+        if (Physics.Raycast(offSetToAboveFeet, Vector3.down, out hit, ((distToGround * 2) + distanceToGroundExtra), layerMask)) //, (distToGround + distanceToGroundExtra), layerMask
         {
-            Debug.DrawLine(offSetToAboveFeet, hit.point);
-            //anim.SetBool("Grounded", true); 
-            print("Found an object - " + hit.collider.gameObject.name);
+            //Debug.DrawLine(offSetToAboveFeet, hit.point, Color.blue, 2);
+            Debug.DrawLine(offSetToAboveFeet, new Vector3(offSetToAboveFeet.x, offSetToAboveFeet.y - ((distToGround*2) + distanceToGroundExtra), offSetToAboveFeet.z), Color.white, 2);
+            print("Landed on - " + hit.collider.gameObject.name);
+            anim.SetBool("Grounded", true);
         }
-           
 
         return Physics.Raycast(offSetToAboveFeet, Vector3.down, distToGround + distanceToGroundExtra, layerMask);
-	}
+    }
+
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    //ignore player player, this stops the grounded function firsing on the players collider
+    //    print("cur object - " + collision.gameObject.layer);
+    //    var layerMask = ~((1 << 11) | (1 << Physics.IgnoreRaycastLayer)); // | (1 << 13) | (1 << 15)
+    //    if (((1 << collision.gameObject.layer) & layerMask) != 0)
+    //    {
+    //        print("Found the bloody thing! - " + collision.collider.gameObject.name);
+    //        anim.SetBool("Grounded", true);
+    //    }
+    //}
 }

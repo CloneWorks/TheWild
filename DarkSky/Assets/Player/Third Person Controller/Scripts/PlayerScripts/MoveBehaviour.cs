@@ -39,7 +39,14 @@ public class MoveBehaviour : GenericBehaviour
 		run = Input.GetButton ("Run");
 		if(Input.GetButtonDown ("Jump"))
 			jump = true;
-	}
+
+        if (!anim.GetBool("Grounded") && !anim.GetBool(jumpBool))
+        {
+            print("looking for the ground!");
+
+            IsGrounded();
+        }
+    }
 
 	// LocalFixedUpdate overrides the virtual function of the base class.
 	public override void LocalFixedUpdate()
@@ -60,12 +67,13 @@ public class MoveBehaviour : GenericBehaviour
 			// Set jump boolean on the Animator controller.
 			jump = false;
 			anim.SetBool (jumpBool, false);
-		}
+        }
 		// Start jump.
-		if (jump && !anim.GetBool(jumpBool) && IsGrounded())
+		if (jump && !anim.GetBool(jumpBool) && anim.GetBool(groundedBool))
 		{
-			// Set jump boolean on the Animator controller.
-			anim.SetBool(jumpBool, true);
+            anim.SetBool(groundedBool, false);
+            // Set jump boolean on the Animator controller.
+            anim.SetBool(jumpBool, true);
 			if(speed > 0)
 			{
 				// Set jump vertical impulse when moving.

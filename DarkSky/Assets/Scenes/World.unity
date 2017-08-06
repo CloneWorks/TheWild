@@ -2709,6 +2709,11 @@ Prefab:
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 942302776}
+    - target: {fileID: 114354465569144670, guid: f78eabf7f7896e146a3bcd72b23f9dff,
+        type: 2}
+      propertyPath: distanceToGroundExtra
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f78eabf7f7896e146a3bcd72b23f9dff, type: 2}
   m_IsPrefabParent: 0
