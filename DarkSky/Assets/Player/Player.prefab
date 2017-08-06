@@ -1423,12 +1423,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b04cfe015b44cfc4fb97244a8ce150c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceToGroundExtra: 0.1
+  distanceToGroundExtra: 0.5
   walkSpeed: 0.15
   runSpeed: 1
   sprintSpeed: 2
   speedDampTime: 0.1
-  jumpHeight: 0.5
+  jumpHeight: 0.4
 --- !u!114 &114354465569144670
 MonoBehaviour:
   m_ObjectHideFlags: 1
