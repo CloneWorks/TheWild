@@ -453,11 +453,11 @@ MonoBehaviour:
   gridCellSize: 0
   doors: []
   dungeonParts:
-  - {fileID: 1591903013030566, guid: af3a0d15e2483af41a494862f64fa759, type: 2}
-  - {fileID: 1576325270585686, guid: 3ccf26645ce49bb42a81592867e8c8ce, type: 2}
-  - {fileID: 1277291519188754, guid: 51887555ed7d54b42af62f60bf259788, type: 2}
-  - {fileID: 1089323926654596, guid: 8cc379dda2f8b4c468aa093d952fc3ef, type: 2}
-  - {fileID: 1581550657604800, guid: 10d40f14e433ab8408bc4d0c813457db, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   dungeonEntrance: {fileID: 1302897908579834, guid: 4ba60664cfafd3d40ab56a396e53d089,
     type: 2}
   dungeonExit: {fileID: 1795006598612620, guid: 26087042c2ea7844bbde3a499f7075af,
@@ -546,8 +546,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 0.05
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
