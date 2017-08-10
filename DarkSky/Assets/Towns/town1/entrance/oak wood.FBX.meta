@@ -3,7 +3,7 @@ guid: 225037e0feecfe443b10d66621739c9b
 timeCreated: 1485778509
 licenseType: Free
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 21
   fileIDToRecycleName:
     100000: Box002
     100002: Box003
@@ -237,6 +237,52 @@ ModelImporter:
     4300086: chain
     4300088: chain
     4300090: rock01
+    6400000: Box002
+    6400002: Box003
+    6400004: Box004
+    6400006: Box005
+    6400008: Box006
+    6400010: Box007
+    6400012: Box008
+    6400014: Box009
+    6400016: Box011
+    6400018: Box012
+    6400020: Box013
+    6400022: Box014
+    6400024: chain
+    6400026: chain 1
+    6400028: Cylinder001
+    6400030: Cylinder002
+    6400032: Cylinder003
+    6400034: Cylinder004
+    6400036: Cylinder006
+    6400038: Cylinder007
+    6400040: Cylinder008
+    6400042: Cylinder009
+    6400044: Cylinder010
+    6400046: Cylinder011
+    6400048: Cylinder012
+    6400050: Cylinder013
+    6400052: Cylinder014
+    6400054: Cylinder016
+    6400056: Cylinder017
+    6400058: Cylinder018
+    6400060: Cylinder019
+    6400062: Cylinder020
+    6400064: Cylinder021
+    6400066: Cylinder022
+    6400068: Cylinder023
+    6400070: Cylinder024
+    6400072: Cylinder025
+    6400074: Cylinder026
+    6400076: Cylinder027
+    6400078: Cylinder028
+    6400080: gate
+    6400082: gate_left
+    6400084: gate_right
+    6400086: rock01
+    6400088: Town billboard
+    6400090: tree01
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -248,6 +294,8 @@ ModelImporter:
     resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -258,14 +306,18 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations: []
     isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
+    importVisibility: 0
     importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -281,6 +333,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
