@@ -66,12 +66,12 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _HeightScale: 0.1
+    - _HeightScale: 0.01
     - _Intence: 773
     - _Intensity: 6.41
     - _Metallic: 0
     - _Mode: 0
-    - _NoiseScale: 1.941
+    - _NoiseScale: 0.01
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0

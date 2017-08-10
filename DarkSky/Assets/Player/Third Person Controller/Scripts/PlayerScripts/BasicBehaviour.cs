@@ -205,7 +205,7 @@ public abstract class GenericBehaviour : MonoBehaviour
     {
         if (!anim.GetBool("Grounded"))
         {
-            print("looking for the ground!");
+           // print("looking for the ground!");
             IsGrounded();
         }
     }
@@ -252,22 +252,22 @@ public abstract class GenericBehaviour : MonoBehaviour
         {
             //Debug.DrawLine(offSetToAboveFeet, hit.point, Color.blue, 2);
             Debug.DrawLine(offSetToAboveFeet, new Vector3(offSetToAboveFeet.x, offSetToAboveFeet.y - ((distToGround*2) + distanceToGroundExtra), offSetToAboveFeet.z), Color.white, 2);
-            print("Landed on - " + hit.collider.gameObject.name);
+           // print("Landed on - " + hit.collider.gameObject.name);
             anim.SetBool("Grounded", true);
         }
 
         return Physics.Raycast(offSetToAboveFeet, Vector3.down, distToGround + distanceToGroundExtra, layerMask);
     }
 
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    //ignore player player, this stops the grounded function firsing on the players collider
-    //    print("cur object - " + collision.gameObject.layer);
-    //    var layerMask = ~((1 << 11) | (1 << Physics.IgnoreRaycastLayer)); // | (1 << 13) | (1 << 15)
-    //    if (((1 << collision.gameObject.layer) & layerMask) != 0)
-    //    {
-    //        print("Found the bloody thing! - " + collision.collider.gameObject.name);
-    //        anim.SetBool("Grounded", true);
-    //    }
-    //}
+    private void OnCollisionEnter(Collision collision)
+    {
+        //ignore player player, this stops the grounded function firsing on the players collider
+        print("cur object - " + collision.gameObject.layer);
+        var layerMask = ~((1 << 11) | (1 << Physics.IgnoreRaycastLayer)); // | (1 << 13) | (1 << 15)
+        if (((1 << collision.gameObject.layer) & layerMask) != 0)
+        {
+            //print("Found the bloody thing! - " + collision.collider.gameObject.name);
+            anim.SetBool("Grounded", true);
+        }
+    }
 }
