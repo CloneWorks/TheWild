@@ -5691,11 +5691,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400002, guid: 232c7138884ffb44bb77381dc077df03, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -21.29
+      value: -21.26
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 232c7138884ffb44bb77381dc077df03, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.56
+      value: -0.3
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 232c7138884ffb44bb77381dc077df03, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5873,6 +5873,31 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 420434378}
   m_Mesh: {fileID: 4300056, guid: 225037e0feecfe443b10d66621739c9b, type: 3}
+--- !u!1 &421328989 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1446572950105394, guid: 7f7987552a6df2f478c74d6a2a0e2028,
+    type: 2}
+  m_PrefabInternal: {fileID: 1570319954}
+--- !u!114 &421328990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 421328989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0923359e9e352a4b9b11c7b7161ad67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Radius: 0.4
+  m_SampleCount: 1
+  m_OcclusionIntensity: 1.5
+  m_Blur: 2
+  m_Downsampling: 2
+  m_OcclusionAttenuation: 1
+  m_MinZ: 0.01
+  m_SSAOShader: {fileID: 4800000, guid: 43ca18288c424f645aaa1e9e07f04c50, type: 3}
+  m_RandomTexture: {fileID: 2800000, guid: a181ca8e3c62f3e4b8f183f6c586b032, type: 3}
 --- !u!1 &424985413
 GameObject:
   m_ObjectHideFlags: 0
@@ -15536,7 +15561,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1224481858}
   m_LocalRotation: {x: -0, y: -0.7103346, z: -0, w: 0.7038642}
-  m_LocalPosition: {x: 99.89, y: 77.0097, z: 61.52}
+  m_LocalPosition: {x: 105.82, y: 77.0097, z: 61.57}
   m_LocalScale: {x: 2.4671166, y: 2.4671173, z: 2.4671183}
   m_Children: []
   m_Father: {fileID: 1723270074}
